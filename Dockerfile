@@ -12,7 +12,7 @@ ENV VITE_API_URL=${VITE_API_URL:-http://localhost:5000/api}
 
 RUN npm run build
 
-FROM php:8.4-fpm-alpine
+FROM php:8.5-fpm-alpine
 
 RUN apk add --no-cache postgresql-dev \
     && docker-php-ext-install pdo_pgsql
