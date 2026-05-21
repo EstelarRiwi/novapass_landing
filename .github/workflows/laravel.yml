@@ -37,7 +37,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -f Dockerfile -t ghcr.io/${{ github.repository }}:latest .
+          docker build -f Dockerfile -t ghcr.io/novapass_landing:latest .
           docker push ghcr.io/${{ github.repository }}:latest
 
   deploy:
