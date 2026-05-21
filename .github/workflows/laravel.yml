@@ -56,10 +56,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
+            cd /var/www/novapass_landing || git clone https://github.com/EstelarRiwi/novapass_landing.git /var/www/novapass_landing
+            cd /var/www/novapass_landing
+            git pull
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.TOKEN }}
-            docker pull ${{ env.IMAGE_TAG }}
-            docker stop novapass_landing || true
-            docker rm novapass_landing || true
-            docker run -d --name novapass_landing \
-              -p 9000:9000 \
-              ${{ env.IMAGE_TAG }}
+            docker compose pull app
+            docker compose up -d --remove-orphans
+            docker image prune -f

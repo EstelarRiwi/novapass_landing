@@ -37,7 +37,7 @@ COPY public/manifest.json public/
 COPY public/sw.js public/
 COPY public/icons public/icons/
 
-RUN ln -s /var/www/public/storage /var/www/storage/app/public \
+RUN ln -s /var/www/storage/app/public /var/www/public/storage \
     && mkdir -p bootstrap/cache storage/framework/{cache,sessions,views} storage/logs \
     && chmod -R 775 storage bootstrap/cache
 

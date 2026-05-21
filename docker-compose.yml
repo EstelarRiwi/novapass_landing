@@ -1,9 +1,7 @@
 services:
   app:
-    build:
-      context: .
-      args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:5000/api}
+    image: ghcr.io/estelarriwi/novapass_landing:latest
+    pull_policy: always
     env_file:
       - .env
     volumes:
