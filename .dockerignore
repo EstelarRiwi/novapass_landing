@@ -15,8 +15,6 @@ docker
 Dockerfile
 docker-compose.yml
 README.md
-composer.lock
-package-lock.json
 .gitattributes
 .editorconfig
 .phpunit.*
