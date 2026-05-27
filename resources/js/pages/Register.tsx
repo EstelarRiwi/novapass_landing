@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { UserPlus, Star } from 'lucide-react'
+import { UserPlus, Star, Eye, EyeOff, Check, X } from 'lucide-react'
 
 export default function Register() {
   const { register, loginWithGoogle, loading } = useAuth()
@@ -9,13 +9,28 @@ export default function Register() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const [error, setError] = useState('')
+
+  const reqs = [
+    { label: 'Mínimo 8 caracteres',  met: password.length >= 8 },
+    { label: '1 letra mayúscula',     met: /[A-Z]/.test(password) },
+    { label: '1 número',              met: /[0-9]/.test(password) },
+  ]
+  const allMet = reqs.every(r => r.met)
+  const passwordsMatch = confirm.length > 0 && password === confirm
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres')
+    if (!allMet) {
+      setError('La contraseña no cumple los requisitos')
+      return
+    }
+    if (password !== confirm) {
+      setError('Las contraseñas no coinciden')
       return
     }
     try {
@@ -129,7 +144,101 @@ export default function Register() {
             </div>
             <div>
               <label htmlFor="password">Contraseña</label>
-              <input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" required minLength={6} />
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Mínimo 8 caracteres"
+                  required
+                  style={{ paddingRight: '2.75rem' }}
+                />
+                <button
+                  type="button"
+                  onMouseDown={() => setShowPassword(true)}
+                  onMouseUp={() => setShowPassword(false)}
+                  onMouseLeave={() => setShowPassword(false)}
+                  onTouchStart={() => setShowPassword(true)}
+                  onTouchEnd={() => setShowPassword(false)}
+                  tabIndex={-1}
+                  style={{
+                    position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'var(--color-text-muted)', padding: 0, display: 'flex', alignItems: 'center',
+                  }}
+                >
+                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                </button>
+              </div>
+              {password.length > 0 && (
+                <div style={{ marginTop: '0.625rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                  {reqs.map(r => (
+                    <div key={r.label} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem' }}>
+                      <div style={{
+                        width: 16, height: 16, borderRadius: '50%', flexShrink: 0,
+                        background: r.met ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.12)',
+                        border: `1px solid ${r.met ? 'rgba(34,197,94,0.4)' : 'rgba(239,68,68,0.3)'}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        {r.met
+                          ? <Check size={9} color="#4ADE80" strokeWidth={3} />
+                          : <X size={9} color="#F87171" strokeWidth={3} />
+                        }
+                      </div>
+                      <span style={{ color: r.met ? '#4ADE80' : 'var(--color-text-muted)' }}>{r.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div>
+              <label htmlFor="confirm">Confirmar contraseña</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="confirm"
+                  type={showConfirm ? 'text' : 'password'}
+                  value={confirm}
+                  onChange={e => setConfirm(e.target.value)}
+                  placeholder="Repite tu contraseña"
+                  required
+                  style={{ paddingRight: '2.75rem' }}
+                />
+                <button
+                  type="button"
+                  onMouseDown={() => setShowConfirm(true)}
+                  onMouseUp={() => setShowConfirm(false)}
+                  onMouseLeave={() => setShowConfirm(false)}
+                  onTouchStart={() => setShowConfirm(true)}
+                  onTouchEnd={() => setShowConfirm(false)}
+                  tabIndex={-1}
+                  style={{
+                    position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'var(--color-text-muted)', padding: 0, display: 'flex', alignItems: 'center',
+                  }}
+                >
+                  {showConfirm ? <EyeOff size={17} /> : <Eye size={17} />}
+                </button>
+              </div>
+              {confirm.length > 0 && (
+                <div style={{ marginTop: '0.375rem', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem' }}>
+                  <div style={{
+                    width: 16, height: 16, borderRadius: '50%', flexShrink: 0,
+                    background: passwordsMatch ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.12)',
+                    border: `1px solid ${passwordsMatch ? 'rgba(34,197,94,0.4)' : 'rgba(239,68,68,0.3)'}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {passwordsMatch
+                      ? <Check size={9} color="#4ADE80" strokeWidth={3} />
+                      : <X size={9} color="#F87171" strokeWidth={3} />
+                    }
+                  </div>
+                  <span style={{ color: passwordsMatch ? '#4ADE80' : '#F87171' }}>
+                    {passwordsMatch ? 'Las contraseñas coinciden' : 'Las contraseñas no coinciden'}
+                  </span>
+                </div>
+              )}
             </div>
             <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '0.25rem' }}>
               {loading

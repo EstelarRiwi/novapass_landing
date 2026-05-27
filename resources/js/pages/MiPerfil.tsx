@@ -7,7 +7,7 @@ export default function MiPerfil() {
   const { user } = useAuth()
   const { update, uploadPhoto, loading } = useProfile()
   const fileRef = useRef<HTMLInputElement>(null)
-  const [name, setName] = useState(user?.name || '')
+  const [name, setName] = useState(user?.fullName || '')
   const [email, setEmail] = useState(user?.email || '')
   const [success, setSuccess] = useState(false)
 
@@ -72,8 +72,8 @@ export default function MiPerfil() {
                   if (overlay) overlay.style.opacity = '0'
                 }}
               >
-                {user?.photo_url ? (
-                  <img src={user.photo_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                {user?.avatarUrl ? (
+                  <img src={user.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <User size={40} style={{ color: '#C084FC' }} />
                 )}

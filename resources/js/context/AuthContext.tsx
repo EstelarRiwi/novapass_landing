@@ -2,10 +2,11 @@ import { createContext, useContext, useState, useCallback, type ReactNode } from
 import { api } from '../api/client'
 
 interface User {
-  id: number
-  name: string
+  id: string
+  fullName: string | null
   email: string
-  photo_url: string | null
+  avatarUrl: string | null
+  phone: string | null
   role: string
 }
 
@@ -18,7 +19,7 @@ interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>
   loginWithGoogle: () => void
   register: (name: string, email: string, password: string) => Promise<void>
-  logout: () => void
+  logout: () => Promise<void>
   updateUser: (user: User) => void
 }
 
@@ -36,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     setState(s => ({ ...s, loading: true }))
     try {
-      const data = await api.post<{ token: string; user: User }>('/auth/login', { email, password })
+      const data = await api.post<{ token: string; role: string; permissions: string[]; user: User }>('/auth/login', { email, password })
       api.setToken(data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
       setState({ user: data.user, loading: false })
@@ -53,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = useCallback(async (name: string, email: string, password: string) => {
     setState(s => ({ ...s, loading: true }))
     try {
-      const data = await api.post<{ token: string; user: User }>('/auth/register', { name, email, password })
+      const data = await api.post<{ token: string; role: string; permissions: string[]; user: User }>('/auth/register', { fullName: name, email, password })
       api.setToken(data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
       setState({ user: data.user, loading: false })
@@ -63,7 +64,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    try { await api.post('/auth/logout') } catch {}
     api.setToken(null)
     localStorage.removeItem('user')
     setState({ user: null, loading: false })
