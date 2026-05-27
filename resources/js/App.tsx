@@ -13,6 +13,7 @@ import MisEntradas from './pages/MisEntradas'
 import MisFavoritos from './pages/MisFavoritos'
 import MiPerfil from './pages/MiPerfil'
 import PQRS from './pages/PQRS'
+import NotFound from './pages/NotFound'
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
             <Route path="/mis-favoritos" element={<ProtectedRoute><MisFavoritos /></ProtectedRoute>} />
             <Route path="/mi-perfil" element={<ProtectedRoute><MiPerfil /></ProtectedRoute>} />
             <Route path="/pqrs" element={<ProtectedRoute><PQRS /></ProtectedRoute>} />
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
         <Chatbot />
