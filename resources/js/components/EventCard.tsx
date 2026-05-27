@@ -6,6 +6,11 @@ import { useFavorites } from '../hooks/useFavorites'
 import { Heart } from 'lucide-react'
 import { useEffect } from 'react'
 
+function safeImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null
+  return url.startsWith('http://') || url.startsWith('https://') ? url : null
+}
+
 interface Props {
   event: Event
 }
@@ -32,8 +37,8 @@ export function EventCard({ event }: Props) {
       {/* Image */}
       <div style={{
         height: 190,
-        background: event.image_url
-          ? `url(${event.image_url}) center/cover`
+        background: safeImageUrl(event.image_url)
+          ? `url(${safeImageUrl(event.image_url)}) center/cover`
           : 'linear-gradient(135deg, #2D1B69 0%, #1A1028 100%)',
         position: 'relative',
       }}>

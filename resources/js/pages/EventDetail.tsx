@@ -1,5 +1,10 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+
+function safeImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null
+  return url.startsWith('http://') || url.startsWith('https://') ? url : null
+}
 import { useEvent } from '../hooks/useEvents'
 import { useAuth } from '../context/AuthContext'
 import { useCheckout } from '../hooks/useTickets'
@@ -97,8 +102,8 @@ export default function EventDetail() {
             overflow: 'hidden',
             marginBottom: '2rem',
             position: 'relative',
-            background: event.image_url
-              ? `url(${event.image_url}) center/cover`
+            background: safeImageUrl(event.image_url)
+              ? `url(${safeImageUrl(event.image_url)}) center/cover`
               : 'linear-gradient(135deg, #2D1B69 0%, #1A1028 100%)',
             border: '1px solid rgba(147, 51, 234, 0.2)',
           }}>
