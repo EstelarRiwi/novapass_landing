@@ -135,6 +135,14 @@ export default function Login() {
                 placeholder="••••••••"
                 required
               />
+              <div style={{ textAlign: 'right', marginTop: '0.375rem' }}>
+                <Link
+                  to="/recuperar-contrasena"
+                  style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', textDecoration: 'underline' }}
+                >
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
             </div>
             <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '0.25rem' }}>
               {loading

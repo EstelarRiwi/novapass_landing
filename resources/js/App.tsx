@@ -14,6 +14,8 @@ import MisFavoritos from './pages/MisFavoritos'
 import MiPerfil from './pages/MiPerfil'
 import PQRS from './pages/PQRS'
 import NotFound from './pages/NotFound'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 
 export default function App() {
   return (
@@ -24,6 +26,8 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/recuperar-contrasena" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/evento/:id" element={<EventDetail />} />
             <Route path="/pago/confirmacion" element={<PurchaseConfirmation />} />
             <Route path="/mis-compras" element={<ProtectedRoute><MisCompras /></ProtectedRoute>} />
