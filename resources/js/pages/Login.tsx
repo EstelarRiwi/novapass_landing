@@ -69,7 +69,7 @@ export default function Login() {
             <Star size={26} fill="currentColor" />
             NovaPass
           </div>
-          <h2 style={{ marginBottom: '0.375rem', fontSize: '1.5rem' }}>Iniciar Sesión</h2>
+          <h1 style={{ marginBottom: '0.375rem', fontSize: '1.5rem' }}>Iniciar Sesión</h1>
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9375rem' }}>
             Accede a tu cuenta para comprar boletas
           </p>
@@ -146,7 +146,7 @@ export default function Login() {
 
           <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
             ¿No tienes cuenta?{' '}
-            <Link to="/register" style={{ fontWeight: 600, color: '#C084FC' }}>Regístrate</Link>
+            <Link to="/register" style={{ fontWeight: 600, color: '#C084FC', textDecoration: 'underline' }}>Regístrate</Link>
           </p>
         </div>
       </div>

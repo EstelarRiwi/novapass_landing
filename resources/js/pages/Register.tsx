@@ -89,7 +89,7 @@ export default function Register() {
             <Star size={26} fill="currentColor" />
             NovaPass
           </div>
-          <h2 style={{ marginBottom: '0.375rem', fontSize: '1.5rem' }}>Crear Cuenta</h2>
+          <h1 style={{ marginBottom: '0.375rem', fontSize: '1.5rem' }}>Crear Cuenta</h1>
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9375rem' }}>
             Regístrate para comprar boletas y más
           </p>
@@ -162,6 +162,7 @@ export default function Register() {
                   onTouchStart={() => setShowPassword(true)}
                   onTouchEnd={() => setShowPassword(false)}
                   tabIndex={-1}
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                   style={{
                     position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)',
                     background: 'none', border: 'none', cursor: 'pointer',
@@ -212,6 +213,7 @@ export default function Register() {
                   onTouchStart={() => setShowConfirm(true)}
                   onTouchEnd={() => setShowConfirm(false)}
                   tabIndex={-1}
+                  aria-label={showConfirm ? 'Ocultar confirmación' : 'Mostrar confirmación'}
                   style={{
                     position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)',
                     background: 'none', border: 'none', cursor: 'pointer',
@@ -250,7 +252,7 @@ export default function Register() {
 
           <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
             ¿Ya tienes cuenta?{' '}
-            <Link to="/login" style={{ fontWeight: 600, color: '#C084FC' }}>Inicia sesión</Link>
+            <Link to="/login" style={{ fontWeight: 600, color: '#C084FC', textDecoration: 'underline' }}>Inicia sesión</Link>
           </p>
         </div>
       </div>

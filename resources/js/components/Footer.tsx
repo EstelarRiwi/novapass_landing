@@ -36,7 +36,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 style={{
+            <h2 style={{
               fontWeight: 600,
               marginBottom: '1rem',
               fontSize: '0.8125rem',
@@ -45,7 +45,7 @@ export function Footer() {
               color: '#7C7A99',
             }}>
               Navegación
-            </h4>
+            </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
               {[
                 { to: '/', label: 'Eventos' },
@@ -67,7 +67,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 style={{
+            <h2 style={{
               fontWeight: 600,
               marginBottom: '1rem',
               fontSize: '0.8125rem',
@@ -76,7 +76,7 @@ export function Footer() {
               color: '#7C7A99',
             }}>
               Contacto
-            </h4>
+            </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', fontSize: '0.875rem', color: '#7C7A99' }}>
               <span>soporte@novapass.app</span>
               <span>+57 1 234 5678</span>
@@ -89,7 +89,7 @@ export function Footer() {
           paddingTop: '1.5rem',
           textAlign: 'center',
           fontSize: '0.8125rem',
-          color: '#4A4865',
+          color: '#7C7A99',
         }}>
           &copy; {new Date().getFullYear()} NovaPass. Todos los derechos reservados.
         </div>

@@ -34,7 +34,7 @@ export default function EventDetail() {
     return (
       <div className="section">
         <div className="container" style={{ textAlign: 'center' }}>
-          <h2 style={{ marginBottom: '0.75rem' }}>Evento no encontrado</h2>
+          <h1 style={{ marginBottom: '0.75rem' }}>Evento no encontrado</h1>
           <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
             Este evento no existe o ya no está disponible.
           </p>
@@ -127,9 +127,9 @@ export default function EventDetail() {
           <div className="grid-detail">
             {/* Event info */}
             <div>
-              <h2 style={{ marginBottom: '1.25rem', fontSize: 'clamp(1.5rem, 4vw, 2.25rem)', letterSpacing: '-0.02em' }}>
+              <h1 style={{ marginBottom: '1.25rem', fontSize: 'clamp(1.5rem, 4vw, 2.25rem)', letterSpacing: '-0.02em' }}>
                 {event.name}
-              </h2>
+              </h1>
 
               <div style={{
                 display: 'flex',
@@ -170,7 +170,7 @@ export default function EventDetail() {
                 marginBottom: '1.25rem',
               }}>
                 <Tag size={18} style={{ color: '#C084FC' }} />
-                <h3 style={{ fontSize: '1.0625rem' }}>Compra tus boletas</h3>
+                <h2 style={{ fontSize: '1.0625rem' }}>Compra tus boletas</h2>
               </div>
 
               {error && (
