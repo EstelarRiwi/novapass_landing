@@ -6,14 +6,6 @@ export default function NotFound() {
 
   return (
     <>
-      <div className="page-header">
-        <div className="container" style={{ textAlign: 'center' }}>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9375rem' }}>
-            Error 404
-          </p>
-        </div>
-      </div>
-
       <div className="section">
         <div className="container" style={{ maxWidth: 520, margin: '0 auto', textAlign: 'center' }}>
           <div
