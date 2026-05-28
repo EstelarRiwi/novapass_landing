@@ -10,6 +10,8 @@ export function useFavorites() {
     try {
       const data = await api.get<{ event_id: number }[]>('/favorites')
       setFavorites(data.map(f => f.event_id))
+    } catch {
+      // Silently ignore — favorites are not critical
     } finally {
       setLoading(false)
     }

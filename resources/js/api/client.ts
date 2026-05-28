@@ -22,7 +22,12 @@ function setToken(token: string | null): void {
   else localStorage.removeItem('token')
 }
 
-const AUTH_PATHS = ['/auth/login', '/auth/register']
+const AUTH_PATHS = ['/auth/login', '/auth/register', '/auth/logout']
+const PUBLIC_PREFIXES = ['/events']
+
+function isPublicPath(path: string): boolean {
+  return PUBLIC_PREFIXES.some(prefix => path === prefix || path.startsWith(prefix + '/'))
+}
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { params, ...fetchOptions } = options
@@ -31,15 +36,17 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     ...(fetchOptions.headers as Record<string, string>),
   }
 
+  const publicPath = isPublicPath(path)
   const token = getToken()
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  if (token && !publicPath) headers['Authorization'] = `Bearer ${token}`
 
   const response = await fetch(buildUrl(path, params), {
     ...fetchOptions,
     headers,
   })
 
-  if (response.status === 401 && !AUTH_PATHS.includes(path)) {
+  if (response.status === 401 && !AUTH_PATHS.includes(path) && !publicPath) {
+    console.warn(`[API] 401 en ${path} — cerrando sesión`)
     if (!redirecting) {
       redirecting = true
       setToken(null)
