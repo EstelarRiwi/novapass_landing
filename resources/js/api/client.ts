@@ -22,6 +22,8 @@ function setToken(token: string | null): void {
   else localStorage.removeItem('token')
 }
 
+const AUTH_PATHS = ['/auth/login', '/auth/register']
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { params, ...fetchOptions } = options
   const headers: Record<string, string> = {
@@ -37,7 +39,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     headers,
   })
 
-  if (response.status === 401) {
+  if (response.status === 401 && !AUTH_PATHS.includes(path)) {
     if (!redirecting) {
       redirecting = true
       setToken(null)
