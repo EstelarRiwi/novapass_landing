@@ -22,7 +22,7 @@ function mapTicket(raw: any): Ticket {
     category_name: raw.category,
     seat: raw.seat ?? null,
     status: raw.status,
-    qr_url: raw.qr_url ?? null,
+    qr_url: raw.qrUrl ?? null,
   }
 }
 
