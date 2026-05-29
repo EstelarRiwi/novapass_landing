@@ -69,11 +69,21 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   }
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Request failed' }))
-    throw new Error(error.message || `HTTP ${response.status}`)
+    const body = await response.json().catch(() => ({}))
+    const message = body.error?.message || body.message || body.error?.code || `HTTP ${response.status}`
+    throw new Error(message)
   }
 
-  return response.json()
+  const json = await response.json()
+
+  if (json && typeof json === 'object' && 'success' in json) {
+    if (!json.success) {
+      throw new Error(json.error?.message || json.error?.code || 'Request failed')
+    }
+    return json.data as T
+  }
+
+  return json as T
 }
 
 export const api = {
