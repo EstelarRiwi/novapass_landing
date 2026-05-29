@@ -15,10 +15,10 @@ export default function EventDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { event, loading } = useEvent(Number(id))
+  const { event, loading } = useEvent(id!)
   const { createPreference, loading: checkoutLoading } = useCheckout()
 
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [error, setError] = useState('')
 
@@ -52,8 +52,8 @@ export default function EventDetail() {
     if (!selectedCategory) { setError('Selecciona una categoría'); return }
     setError('')
     try {
-      const url = await createPreference(event.id, selectedCategory, quantity)
-      window.location.href = url
+      await createPreference(event.id, selectedCategory, quantity)
+      navigate('/mis-entradas')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al procesar la compra')
     }

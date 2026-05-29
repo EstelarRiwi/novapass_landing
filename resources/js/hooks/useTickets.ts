@@ -2,16 +2,28 @@ import { useState, useCallback } from 'react'
 import { api } from '../api/client'
 
 export interface Ticket {
-  id: number
-  event_id: number
+  id: string
+  event_id: string
   event_name: string
   event_date: string
   category_name: string
-  seat: string
-  price: number
+  seat: string | null
   status: string
-  qr_token: string
-  qr_url: string
+  qr_url: string | null
+}
+
+function mapTicket(raw: any): Ticket {
+  const ev = raw.event || {}
+  return {
+    id: raw.id,
+    event_id: ev.id,
+    event_name: ev.title,
+    event_date: ev.date,
+    category_name: raw.category,
+    seat: raw.seat ?? null,
+    status: raw.status,
+    qr_url: raw.qr_url ?? null,
+  }
 }
 
 export function useTickets() {
@@ -23,8 +35,9 @@ export function useTickets() {
     setLoading(true)
     setError(null)
     try {
-      const data = await api.get<Ticket[]>('/tickets')
-      setTickets(data)
+      const raw = await api.get<any>('/tickets')
+      const list: Ticket[] = (raw.tickets || raw || []).map(mapTicket)
+      setTickets(list)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Error al cargar entradas')
     } finally {
@@ -44,8 +57,9 @@ export function usePurchases() {
     setLoading(true)
     setError(null)
     try {
-      const data = await api.get<Ticket[]>('/tickets/history')
-      setPurchases(data)
+      const raw = await api.get<any>('/tickets/history')
+      const list: Ticket[] = (raw.tickets || raw || []).map(mapTicket)
+      setPurchases(list)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Error al cargar compras')
     } finally {
@@ -59,15 +73,15 @@ export function usePurchases() {
 export function useCheckout() {
   const [loading, setLoading] = useState(false)
 
-  const createPreference = useCallback(async (eventId: number, categoryId: number, quantity: number) => {
+  const createPreference = useCallback(async (eventId: string, categoryId: string, quantity: number) => {
     setLoading(true)
     try {
-      const data = await api.post<{ init_point: string }>('/tickets/checkout', {
-        event_id: eventId,
-        category_id: categoryId,
+      const data = await api.post<{ ticket_id: string }>('/tickets/checkout', {
+        eventId,
+        categoryId,
         quantity,
       })
-      return data.init_point
+      return data.ticket_id
     } finally {
       setLoading(false)
     }
