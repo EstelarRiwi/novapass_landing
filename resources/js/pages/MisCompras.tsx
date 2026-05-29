@@ -80,11 +80,19 @@ export default function MisCompras() {
                         {new Date(ticket.event_date).toLocaleDateString('es-CO')}
                       </span>
                       <span>{ticket.category_name}</span>
-                      <span style={{ color: '#F59E0B', fontWeight: 600 }}>
-                        ${ticket.price.toLocaleString()}
-                      </span>
-                      <span className={`badge ${ticket.status === 'active' ? 'badge-success' : 'badge-error'}`}>
-                        {ticket.status === 'active' ? 'Activa' : 'Usada'}
+                      {ticket.price > 0 && (
+                        <span style={{ color: '#F59E0B', fontWeight: 600 }}>
+                          ${ticket.price.toLocaleString('es-CO')}
+                        </span>
+                      )}
+                      <span className={`badge ${
+                        ticket.status === 'active'  ? 'badge-success' :
+                        ticket.status === 'pending' ? 'badge-warning'  :
+                        ticket.status === 'used'    ? 'badge-muted'    : 'badge-error'
+                      }`}>
+                        {ticket.status === 'active'  ? 'Activa'    :
+                         ticket.status === 'pending' ? 'Pendiente' :
+                         ticket.status === 'used'    ? 'Usada'     : 'Cancelada'}
                       </span>
                     </div>
                   </div>

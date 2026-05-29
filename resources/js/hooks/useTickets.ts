@@ -10,6 +10,7 @@ export interface Ticket {
   seat: string | null
   status: string
   qr_url: string | null
+  price: number
 }
 
 function mapTicket(raw: any): Ticket {
@@ -23,6 +24,7 @@ function mapTicket(raw: any): Ticket {
     seat: raw.seat ?? null,
     status: raw.status,
     qr_url: raw.qrUrl ?? null,
+    price: raw.price ?? 0,
   }
 }
 
