@@ -40,6 +40,7 @@ function mapUser(raw: any) {
           body: form,
         }
       )
+      if (!res.ok) throw new Error(`Upload failed: ${res.status}`)
       const raw = await res.json()
       updateUser(mapUser(raw))
     } finally {

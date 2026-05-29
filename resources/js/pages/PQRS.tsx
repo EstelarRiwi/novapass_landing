@@ -23,7 +23,7 @@ export default function PQRS() {
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
 
-  useEffect(() => { fetch() }, [])
+  useEffect(() => { fetch() }, [fetch])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

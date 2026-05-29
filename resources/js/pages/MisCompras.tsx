@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 export default function MisCompras() {
   const { purchases, loading, fetch } = usePurchases()
 
-  useEffect(() => { fetch() }, [])
+  useEffect(() => { fetch() }, [fetch])
 
   return (
     <>

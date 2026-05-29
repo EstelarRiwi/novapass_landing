@@ -9,7 +9,7 @@ export default function MisFavoritos() {
   const { events, loading } = useEvents()
   const { favorites, fetch: fetchFavs } = useFavorites()
 
-  useEffect(() => { fetchFavs() }, [])
+  useEffect(() => { fetchFavs() }, [fetchFavs])
 
   const favEvents = events.filter(e => favorites.includes(e.id))
 

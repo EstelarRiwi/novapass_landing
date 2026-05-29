@@ -21,7 +21,7 @@ export function EventCard({ event }: Props) {
 
   useEffect(() => {
     if (user) fetch()
-  }, [user])
+  }, [user, fetch])
 
   const date = new Date(event.date).toLocaleDateString('es-CO', {
     day: 'numeric',

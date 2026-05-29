@@ -7,7 +7,7 @@ export default function MisEntradas() {
   const { tickets, loading, fetch: fetchTickets } = useTickets()
   const [selected, setSelected] = useState<number | null>(null)
 
-  useEffect(() => { fetchTickets() }, [])
+  useEffect(() => { fetchTickets() }, [fetchTickets])
 
   const downloadPdf = async (ticketId: number) => {
     const token = localStorage.getItem('token')
