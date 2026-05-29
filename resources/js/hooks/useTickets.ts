@@ -17,35 +17,43 @@ export interface Ticket {
 export function useTickets() {
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const fetch = useCallback(async () => {
     setLoading(true)
+    setError(null)
     try {
       const data = await api.get<Ticket[]>('/tickets')
       setTickets(data)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Error al cargar entradas')
     } finally {
       setLoading(false)
     }
   }, [])
 
-  return { tickets, loading, fetch }
+  return { tickets, loading, error, fetch }
 }
 
 export function usePurchases() {
   const [purchases, setPurchases] = useState<Ticket[]>([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const fetch = useCallback(async () => {
     setLoading(true)
+    setError(null)
     try {
       const data = await api.get<Ticket[]>('/tickets/history')
       setPurchases(data)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Error al cargar compras')
     } finally {
       setLoading(false)
     }
   }, [])
 
-  return { purchases, loading, fetch }
+  return { purchases, loading, error, fetch }
 }
 
 export function useCheckout() {

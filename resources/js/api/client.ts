@@ -29,6 +29,19 @@ function isPublicPath(path: string): boolean {
   return PUBLIC_PREFIXES.some(prefix => path === prefix || path.startsWith(prefix + '/'))
 }
 
+function isTokenExpired(): boolean {
+  const token = getToken()
+  if (!token) return true
+  try {
+    const parts = token.split('.')
+    if (parts.length !== 3) return true
+    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')))
+    return !payload.exp || payload.exp * 1000 < Date.now()
+  } catch {
+    return true
+  }
+}
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { params, ...fetchOptions } = options
   const headers: Record<string, string> = {
@@ -46,8 +59,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   })
 
   if (response.status === 401 && !AUTH_PATHS.includes(path) && !publicPath) {
-    console.warn(`[API] 401 en ${path} — cerrando sesión`)
-    if (!redirecting) {
+    if (isTokenExpired() && !redirecting) {
       redirecting = true
       setToken(null)
       localStorage.removeItem('user')

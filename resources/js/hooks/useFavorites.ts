@@ -19,12 +19,16 @@ export function useFavorites() {
 
   const toggle = useCallback(async (eventId: number) => {
     const isFav = favorites.includes(eventId)
-    if (isFav) {
-      await api.delete(`/favorites/${eventId}`)
-      setFavorites(p => p.filter(id => id !== eventId))
-    } else {
-      await api.post(`/favorites`, { event_id: eventId })
-      setFavorites(p => [...p, eventId])
+    try {
+      if (isFav) {
+        await api.delete(`/favorites/${eventId}`)
+        setFavorites(p => p.filter(id => id !== eventId))
+      } else {
+        await api.post(`/favorites`, { event_id: eventId })
+        setFavorites(p => [...p, eventId])
+      }
+    } catch {
+      // silently ignore — favorites are not critical
     }
   }, [favorites])
 

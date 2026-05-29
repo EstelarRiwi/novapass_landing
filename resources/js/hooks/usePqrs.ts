@@ -19,6 +19,8 @@ export function usePqrs() {
     try {
       const data = await api.get<PqrsRequest[]>('/pqrs')
       setRequests(data)
+    } catch {
+      // silently ignore — endpoint may not be available for regular users
     } finally {
       setLoading(false)
     }
