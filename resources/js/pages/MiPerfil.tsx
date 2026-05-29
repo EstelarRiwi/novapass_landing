@@ -10,18 +10,30 @@ export default function MiPerfil() {
   const [name, setName] = useState(user?.fullName || '')
   const [email, setEmail] = useState(user?.email || '')
   const [success, setSuccess] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSuccess(false)
-    await update({ name, email })
-    setSuccess(true)
-    setTimeout(() => setSuccess(false), 3000)
+    setError('')
+    try {
+      await update({ name, email })
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 3000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al actualizar el perfil')
+    }
   }
 
   const handlePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) await uploadPhoto(file)
+    if (!file) return
+    setError('')
+    try {
+      await uploadPhoto(file)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al subir la foto')
+    }
   }
 
   return (
@@ -99,6 +111,12 @@ export default function MiPerfil() {
                 Haz clic para cambiar foto
               </span>
             </div>
+
+            {error && (
+              <div className="alert-error" style={{ marginBottom: '1.25rem' }}>
+                {error}
+              </div>
+            )}
 
             {success && (
               <div className="alert-success" style={{ marginBottom: '1.25rem', animation: 'slideInUp 0.3s ease forwards' }}>
