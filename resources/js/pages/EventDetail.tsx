@@ -4,7 +4,32 @@ import { useEvent } from '../hooks/useEvents'
 import { useAuth } from '../context/AuthContext'
 import { useCheckout } from '../hooks/useTickets'
 import { useFavorites } from '../hooks/useFavorites'
+import { getEventArtists, type Artist } from '../data/eventArtists'
 import { Calendar, MapPin, ChevronLeft, Clock, Building2, Heart, Minus, Plus, ShieldCheck } from 'lucide-react'
+
+const AVATAR_COLORS = [
+  ['#7C3AED','#4C1D95'], ['#DB2777','#9D174D'], ['#0891B2','#164E63'],
+  ['#D97706','#92400E'], ['#059669','#065F46'], ['#DC2626','#7F1D1D'],
+]
+
+function ArtistCard({ artist, index }: { artist: Artist; index: number }) {
+  const [r, g] = AVATAR_COLORS[index % AVATAR_COLORS.length]
+  const initials = artist.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
+  return (
+    <div className="artist-card">
+      <div className="artist-photo">
+        {artist.photo
+          ? <img src={artist.photo} alt={artist.name} />
+          : <div className="artist-photo-placeholder" style={{ background: `linear-gradient(135deg, ${r}, ${g})` }}>{initials}</div>
+        }
+      </div>
+      <div>
+        <div className="artist-name">{artist.name}</div>
+        <div className="artist-role">{artist.role}</div>
+      </div>
+    </div>
+  )
+}
 
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>()
@@ -40,6 +65,7 @@ export default function EventDetail() {
     )
   }
 
+  const artists = getEventArtists(event.id)
   const category = event.categories.find(c => c.id === selectedCategory)
   const fee = category ? Math.round(category.price * quantity * 0.08) : 0
   const subtotal = category ? category.price * quantity : 0
@@ -120,34 +146,16 @@ export default function EventDetail() {
               <p className="detail-desc">{event.description || 'Una experiencia única que no te puedes perder.'}</p>
             </div>
 
-            <div className="detail-block">
-              <h3 className="detail-section-title">Categorías disponibles</h3>
-              <div className="cat-list">
-                {event.categories.map(cat => {
-                  const out = cat.available === 0
-                  const low = cat.available > 0 && cat.available <= 25
-                  return (
-                    <button
-                      key={cat.id}
-                      disabled={out}
-                      className={`cat-opt ${selectedCategory === cat.id ? 'sel' : ''}`}
-                      onClick={() => { if (!out) { setSelectedCategory(cat.id); setError(''); setQuantity(1) } }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div className="cat-radio" />
-                        <div>
-                          <div className="cnm">{cat.name}</div>
-                          <div className={`cav ${out ? 'out' : low ? 'low' : ''}`}>
-                            {out ? 'Agotado' : low ? `¡Solo ${cat.available} disponibles!` : `${cat.available} disponibles`}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="cpr">${cat.price.toLocaleString('es-CO')}</div>
-                    </button>
-                  )
-                })}
+            {artists.length > 0 && (
+              <div className="detail-block">
+                <h3 className="detail-section-title">Artistas</h3>
+                <div className="artist-grid">
+                  {artists.map((artist, i) => (
+                    <ArtistCard key={artist.name} artist={artist} index={i} />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Buy card */}
