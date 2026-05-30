@@ -119,7 +119,6 @@ window.onload = () => {
   JsBarcode('#barcode', '${ticket.id.replace(/-/g, '').slice(0, 20).toUpperCase()}', {
     format: 'CODE128', width: 1.2, height: 28, displayValue: false, margin: 0, background: '#ffffff', lineColor: '#1a0f2e'
   });
-  setTimeout(() => { window.print(); setTimeout(() => window.close(), 800); }, 300);
 };
 </script>
 </body>
