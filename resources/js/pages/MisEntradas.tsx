@@ -136,7 +136,7 @@ export default function MisEntradas() {
     }
   }, [qrBlobs])
 
-  const list = allTickets
+  const list = tab === 'used' ? allTickets.filter(t => t.status !== 'active') : allTickets
 
   return (
     <>
@@ -218,7 +218,7 @@ export default function MisEntradas() {
                         <div className="tstub-actions">
                           <button
                             className="btn btn-outline btn-sm"
-                            disabled={used || printing === ticket.id || !qrSrc}
+                            disabled={printing === ticket.id || !qrSrc}
                             onClick={() => handleDownload(ticket)}
                           >
                             <Download size={15} />
