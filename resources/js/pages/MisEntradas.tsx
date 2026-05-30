@@ -147,12 +147,24 @@ export default function MisEntradas() {
 
   const handlePrint = useCallback(async (ticket: Ticket) => {
     setPrinting(ticket.id)
-    const qrPath = ticket.qr_path
-    if (!qrPath) { setPrinting(null); return }
-    const qrBase64 = await blobToBase64(qrPath)
-    if (!qrBase64) { setPrinting(null); return }
-    printTicket58mm(ticket, qrBase64)
-    setPrinting(null)
+    const token = localStorage.getItem('token')
+    try {
+      const res = await fetch(`${API_BASE}/tickets/${ticket.id}/pdf`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+      if (!res.ok) throw new Error('PDF no disponible')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `NovaPass-${ticket.id.slice(0, 8).toUpperCase()}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      alert('No se pudo descargar el PDF. Intenta de nuevo.')
+    } finally {
+      setPrinting(null)
+    }
   }, [])
 
   const list = tickets.filter(t => tab === 'active' ? t.status === 'active' : t.status !== 'active')
