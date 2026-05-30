@@ -22,6 +22,8 @@ export default function EventDetail() {
   const [quantity, setQuantity] = useState(1)
   const [error, setError] = useState('')
 
+  const isBuyable = event?.status === 'active'
+
   if (loading) {
     return (
       <div style={{ padding: '5rem 0', display: 'flex', justifyContent: 'center' }}>
@@ -50,6 +52,7 @@ export default function EventDetail() {
   const handleBuy = async () => {
     if (!user) { navigate('/login'); return }
     if (!selectedCategory) { setError('Selecciona una categoría'); return }
+    if (!isBuyable) { setError('Este evento no está disponible para la venta'); return }
     setError('')
     try {
       await createPreference(event.id, selectedCategory, quantity)
@@ -180,6 +183,12 @@ export default function EventDetail() {
               )}
 
               {/* Categories */}
+              {!isBuyable && (
+                <div className="alert-error" style={{ marginBottom: '1rem' }}>
+                  Este evento no está disponible para la venta
+                </div>
+              )}
+
               <div style={{ marginBottom: '1.25rem' }}>
                 <label style={{ marginBottom: '0.625rem' }}>Categoría</label>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -187,7 +196,7 @@ export default function EventDetail() {
                     <button
                       key={cat.id}
                       onClick={() => { setSelectedCategory(cat.id); setError('') }}
-                      disabled={cat.available === 0}
+                      disabled={cat.available === 0 || !isBuyable}
                       style={{
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -200,8 +209,8 @@ export default function EventDetail() {
                         background: selectedCategory === cat.id
                           ? 'rgba(147, 51, 234, 0.12)'
                           : 'rgba(255, 255, 255, 0.03)',
-                        cursor: cat.available === 0 ? 'not-allowed' : 'pointer',
-                        opacity: cat.available === 0 ? 0.5 : 1,
+                        cursor: cat.available === 0 || !isBuyable ? 'not-allowed' : 'pointer',
+                        opacity: cat.available === 0 || !isBuyable ? 0.5 : 1,
                         transition: 'all var(--transition-fast)',
                         textAlign: 'left',
                       }}
@@ -275,12 +284,12 @@ export default function EventDetail() {
 
               <button
                 onClick={handleBuy}
-                disabled={!selectedCategory || checkoutLoading}
+                disabled={!selectedCategory || checkoutLoading || !isBuyable}
                 className="btn btn-cta btn-lg"
                 style={{
                   width: '100%',
-                  opacity: !selectedCategory ? 0.5 : 1,
-                  cursor: !selectedCategory ? 'not-allowed' : 'pointer',
+                  opacity: !selectedCategory || !isBuyable ? 0.5 : 1,
+                  cursor: !selectedCategory || !isBuyable ? 'not-allowed' : 'pointer',
                 }}
               >
                 {checkoutLoading

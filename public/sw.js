@@ -44,8 +44,10 @@ self.addEventListener('fetch', (event) => {
 async function networkFirst(request) {
   try {
     const response = await fetch(request)
-    const cache = await caches.open(CACHE_NAME)
-    cache.put(request, response.clone())
+    if (request.method === 'GET') {
+      const cache = await caches.open(CACHE_NAME)
+      cache.put(request, response.clone())
+    }
     return response
   } catch {
     const cached = await caches.match(request)
