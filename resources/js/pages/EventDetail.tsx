@@ -10,7 +10,7 @@ export default function EventDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { event, loading } = useEvent(Number(id))
+  const { event, loading } = useEvent(id ?? '')
   const { createPreference, loading: checkoutLoading } = useCheckout()
   const { favorites, toggle } = useFavorites()
 
