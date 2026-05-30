@@ -51,7 +51,7 @@ export default function ResetPassword() {
       minHeight: '100vh',
       display: 'flex',
       alignItems: 'center',
-      background: '#0A0A0F',
+      background: 'var(--color-bg)',
       overflow: 'hidden',
       padding: '3rem 1.5rem',
     }}>
@@ -86,8 +86,7 @@ export default function ResetPassword() {
             gap: '0.5rem',
             fontFamily: 'var(--font-heading)',
             fontSize: '1.75rem',
-            color: '#C084FC',
-            textShadow: '0 0 24px rgba(192, 132, 252, 0.45)',
+            color: 'var(--color-primary)',
             marginBottom: '1.25rem',
           }}>
             <Star size={26} fill="currentColor" />
