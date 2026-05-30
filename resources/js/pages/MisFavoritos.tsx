@@ -14,33 +14,46 @@ export default function MisFavoritos() {
   const favEvents = events.filter(e => favorites.includes(e.id))
 
   return (
-    <div className="section">
-      <div className="container" style={{ maxWidth: 900 }}>
-        <h2 style={{ marginBottom: '2rem' }}>Mis Favoritos</h2>
+    <>
+      <section className="page-head">
+        <div className="page-head-glow" />
+        <div className="container container-wide page-head-inner">
+          <span className="eyebrow"><span className="bar" />Tu selección</span>
+          <h1>Mis Favoritos</h1>
+          <p>Los eventos que quieres vivir. Te avisamos antes de que se agoten.</p>
+        </div>
+      </section>
 
-        {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
-            <div className="spinner" style={{ width: 40, height: 40, borderWidth: 4 }} />
-          </div>
-        ) : favEvents.length === 0 ? (
-          <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
-            <Heart size={48} style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }} />
-            <h3 style={{ marginBottom: '0.5rem' }}>Sin favoritos</h3>
-            <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }}>No has agregado eventos a favoritos.</p>
-            <Link to="/" className="btn btn-primary">Explorar Eventos</Link>
-          </div>
-        ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '1.5rem',
-          }}>
-            {favEvents.map(event => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+      <section className="section">
+        <div className="container container-wide">
+          {loading ? (
+            <div className="evgrid">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="evcard">
+                  <div className="skeleton" style={{ aspectRatio: '16/11' }} />
+                  <div className="evcard-body" style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
+                    <div className="skeleton" style={{ height: 22, borderRadius: 8 }} />
+                    <div className="skeleton" style={{ height: 14, borderRadius: 8, width: '60%' }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : favEvents.length === 0 ? (
+            <div className="empty">
+              <div className="empty-ic"><Heart size={34} /></div>
+              <h3>Aún no tienes favoritos</h3>
+              <p>Toca el corazón en cualquier evento para guardarlo aquí.</p>
+              <Link to="/" className="btn btn-primary">Explorar Eventos</Link>
+            </div>
+          ) : (
+            <div className="evgrid">
+              {favEvents.map((event, i) => (
+                <EventCard key={event.id} event={event} index={i} />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    </>
   )
 }

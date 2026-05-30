@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useProfile } from '../hooks/useProfile'
-import { User, Camera } from 'lucide-react'
+import { Camera, CheckCircle } from 'lucide-react'
 
 export default function MiPerfil() {
   const { user } = useAuth()
@@ -9,7 +9,12 @@ export default function MiPerfil() {
   const fileRef = useRef<HTMLInputElement>(null)
   const [name, setName] = useState(user?.fullName || '')
   const [email, setEmail] = useState(user?.email || '')
+  const [phone, setPhone] = useState(user?.phone || '')
   const [success, setSuccess] = useState(false)
+
+  const initials = user?.fullName
+    ? user.fullName.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
+    : '?'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,72 +30,86 @@ export default function MiPerfil() {
   }
 
   return (
-    <div className="section">
-      <div className="container" style={{ maxWidth: 560, margin: '0 auto' }}>
-        <h2 style={{ marginBottom: '2rem' }}>Mi Perfil</h2>
+    <>
+      <section className="page-head">
+        <div className="page-head-glow" />
+        <div className="container container-wide page-head-inner">
+          <span className="eyebrow"><span className="bar" />Tu cuenta</span>
+          <h1>Mi Perfil</h1>
+          <p>Gestiona tu información y mantén tus entradas a tu nombre.</p>
+        </div>
+      </section>
 
-        <div className="card" style={{ padding: '2rem' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem' }}>
-            <div style={{
-              width: 96,
-              height: 96,
-              borderRadius: '50%',
-              background: 'var(--color-bg-alt)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-              position: 'relative',
-              marginBottom: '0.75rem',
-              cursor: 'pointer',
-            }} onClick={() => fileRef.current?.click()}>
-              {user?.avatarUrl ? (
-                <img src={user.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <User size={40} color="var(--color-primary)" />
-              )}
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'rgba(0,0,0,0.4)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: 0,
-                transition: 'opacity var(--transition-fast)',
-                borderRadius: '50%',
-              }}
-                onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
-                onMouseLeave={e => (e.currentTarget.style.opacity = '0')}
-              >
-                <Camera size={24} color="white" />
+      <section className="section">
+        <div className="container container-wide">
+          <div className="profile-layout">
+            {/* Side card */}
+            <div className="profile-side">
+              <div className="profile-cover">
+                <div className="profile-cover-glow" />
+              </div>
+              <div className="profile-av-wrap">
+                <div className="profile-av" onClick={() => fileRef.current?.click()} style={{ cursor: 'pointer' }}>
+                  {user?.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt=""
+                      style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    initials
+                  )}
+                  <div className="cam">
+                    <Camera size={18} style={{ color: '#fff' }} />
+                  </div>
+                </div>
+                <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} style={{ display: 'none' }} />
+                <div className="profile-name">{user?.fullName || 'Usuario'}</div>
+                <div className="profile-email">{user?.email}</div>
               </div>
             </div>
-            <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} style={{ display: 'none' }} />
-            <span style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>Haz clic para cambiar foto</span>
+
+            {/* Form */}
+            <div className="profile-main">
+              <h3>Información personal</h3>
+
+              {success && (
+                <div className="form-success">
+                  <CheckCircle size={18} /> Perfil actualizado correctamente
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="form-grid">
+                <div>
+                  <label className="form-label">Nombre completo</label>
+                  <input type="text" value={name} onChange={e => setName(e.target.value)} required />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label className="form-label">Correo electrónico</label>
+                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+                  </div>
+                  <div>
+                    <label className="form-label">Teléfono</label>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={e => setPhone(e.target.value)}
+                      placeholder="+57 300 000 0000"
+                    />
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '0.8rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+                  <button type="submit" className="btn btn-primary btn-lg" disabled={loading}>
+                    {loading ? <span className="spinner" style={{ width: 20, height: 20 }} /> : 'Guardar Cambios'}
+                  </button>
+                  <a href="/mis-entradas" className="btn btn-ghost btn-lg">Ver mis entradas</a>
+                </div>
+              </form>
+            </div>
           </div>
-
-          {success && (
-            <div style={{ background: '#DCFCE7', color: '#166534', padding: '0.75rem', borderRadius: 'var(--radius-sm)', marginBottom: '1rem', fontSize: '0.875rem' }}>
-              Perfil actualizado correctamente
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div>
-              <label htmlFor="name">Nombre completo</label>
-              <input id="name" type="text" value={name} onChange={e => setName(e.target.value)} required />
-            </div>
-            <div>
-              <label htmlFor="email">Correo electrónico</label>
-              <input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-            </div>
-            <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%' }}>
-              {loading ? <span className="spinner" style={{ width: 20, height: 20, borderColor: 'rgba(255,255,255,0.3)', borderTopColor: 'white' }} /> : 'Guardar Cambios'}
-            </button>
-          </form>
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   )
 }

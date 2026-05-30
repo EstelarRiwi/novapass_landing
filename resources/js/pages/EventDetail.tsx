@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useEvent } from '../hooks/useEvents'
 import { useAuth } from '../context/AuthContext'
 import { useCheckout } from '../hooks/useTickets'
-import { Calendar, MapPin, ChevronLeft, ShoppingCart } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { useFavorites } from '../hooks/useFavorites'
+import { Calendar, MapPin, ChevronLeft, Clock, Building2, Heart, Minus, Plus, ShieldCheck } from 'lucide-react'
 
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>()
@@ -12,6 +12,7 @@ export default function EventDetail() {
   const { user } = useAuth()
   const { event, loading } = useEvent(Number(id))
   const { createPreference, loading: checkoutLoading } = useCheckout()
+  const { favorites, toggle } = useFavorites()
 
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
   const [quantity, setQuantity] = useState(1)
@@ -19,7 +20,7 @@ export default function EventDetail() {
 
   if (loading) {
     return (
-      <div className="section" style={{ display: 'flex', justifyContent: 'center' }}>
+      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div className="spinner" style={{ width: 40, height: 40, borderWidth: 4 }} />
       </div>
     )
@@ -29,19 +30,26 @@ export default function EventDetail() {
     return (
       <div className="section">
         <div className="container" style={{ textAlign: 'center' }}>
-          <h2>Evento no encontrado</h2>
-          <Link to="/" className="btn btn-primary" style={{ marginTop: '1rem' }}>Volver a Eventos</Link>
+          <div className="empty">
+            <h3>Evento no encontrado</h3>
+            <p>Este evento no existe o ya no está disponible.</p>
+            <Link to="/" className="btn btn-primary">Volver a Eventos</Link>
+          </div>
         </div>
       </div>
     )
   }
 
   const category = event.categories.find(c => c.id === selectedCategory)
-  const total = category ? category.price * quantity : 0
+  const fee = category ? Math.round(category.price * quantity * 0.08) : 0
+  const subtotal = category ? category.price * quantity : 0
+  const total = subtotal + fee
+  const isFav = favorites.includes(event.id)
+  const d = new Date(event.date)
 
   const handleBuy = async () => {
     if (!user) { navigate('/login'); return }
-    if (!selectedCategory) { setError('Selecciona una categoría'); return }
+    if (!selectedCategory) { setError('Selecciona una categoría para continuar'); return }
     setError('')
     try {
       await createPreference(event.id, selectedCategory, quantity)
@@ -51,131 +59,193 @@ export default function EventDetail() {
     }
   }
 
-  const date = new Date(event.date).toLocaleDateString('es-CO', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-
   return (
-    <div className="section">
-      <div className="container" style={{ maxWidth: 800 }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.875rem', marginBottom: '1.5rem', fontWeight: 500 }}>
-          <ChevronLeft size={16} /> Volver a Eventos
-        </Link>
-
-        <div style={{
-          height: 300,
-          borderRadius: 'var(--radius-lg)',
-          background: event.image_url
-            ? `url(${event.image_url}) center/cover`
-            : 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
-          marginBottom: '2rem',
-        }} />
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '2rem', alignItems: 'start' }}>
-          <div>
-            <h2 style={{ marginBottom: '1rem' }}>{event.name}</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9375rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Calendar size={18} /> {date}</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><MapPin size={18} /> {event.location}</span>
+    <>
+      {/* Hero */}
+      <section className="detail-hero">
+        <div
+          className="detail-hero-img"
+          style={event.image_url
+            ? { backgroundImage: `url(${event.image_url})` }
+            : { background: 'linear-gradient(135deg, #4C1D95, #6D28D9)' }
+          }
+        />
+        <div className="detail-hero-grad" />
+        <div className="detail-hero-glow" />
+        <div className="detail-hero-inner">
+          <div className="container container-wide">
+            <Link to="/" className="detail-back">
+              <ChevronLeft size={17} /> Volver a Eventos
+            </Link>
+            <div className="detail-tags">
+              {event.status === 'active' && <span className="badge badge-glass">Disponible</span>}
             </div>
-            <p style={{ lineHeight: 1.7, color: 'var(--color-text)' }}>{event.description}</p>
+            <h1 className="detail-title">{event.name}</h1>
+            <div className="detail-meta">
+              <span><Calendar size={19} />
+                {d.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+              </span>
+              <span><Clock size={19} /> {d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })} hrs</span>
+              <span><MapPin size={19} /> {event.location}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Body */}
+      <div className="container container-wide">
+        <div className="detail-layout">
+          {/* Left column */}
+          <div>
+            <div className="info-pills">
+              <div className="info-pill">
+                <div className="ic"><Calendar size={20} /></div>
+                <div className="lb">Fecha</div>
+                <div className="vl">{d.toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+              </div>
+              <div className="info-pill">
+                <div className="ic"><Building2 size={20} /></div>
+                <div className="lb">Recinto</div>
+                <div className="vl">{event.location}</div>
+              </div>
+              <div className="info-pill">
+                <div className="ic"><Clock size={20} /></div>
+                <div className="lb">Hora</div>
+                <div className="vl">{d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</div>
+              </div>
+            </div>
+
+            <div className="detail-block">
+              <h3 className="detail-section-title">Sobre el evento</h3>
+              <p className="detail-desc">{event.description || 'Una experiencia única que no te puedes perder.'}</p>
+            </div>
+
+            <div className="detail-block">
+              <h3 className="detail-section-title">Categorías disponibles</h3>
+              <div className="cat-list">
+                {event.categories.map(cat => {
+                  const out = cat.available === 0
+                  const low = cat.available > 0 && cat.available <= 25
+                  return (
+                    <button
+                      key={cat.id}
+                      disabled={out}
+                      className={`cat-opt ${selectedCategory === cat.id ? 'sel' : ''}`}
+                      onClick={() => { if (!out) { setSelectedCategory(cat.id); setError(''); setQuantity(1) } }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div className="cat-radio" />
+                        <div>
+                          <div className="cnm">{cat.name}</div>
+                          <div className={`cav ${out ? 'out' : low ? 'low' : ''}`}>
+                            {out ? 'Agotado' : low ? `¡Solo ${cat.available} disponibles!` : `${cat.available} disponibles`}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="cpr">${cat.price.toLocaleString('es-CO')}</div>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
           </div>
 
-          <div className="card" style={{ position: 'sticky', top: '5rem' }}>
-            <h3 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>Compra tus boletas</h3>
-
-            {error && (
-              <div style={{ background: '#FEE2E2', color: '#991B1B', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', marginBottom: '1rem', fontSize: '0.8125rem' }}>
-                {error}
-              </div>
-            )}
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Categoría</label>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {event.categories.map(cat => (
+          {/* Buy card */}
+          <div>
+            <div className="buycard">
+              <div className="buycard-head">
+                <h3>Compra tus boletas</h3>
+                {user && (
                   <button
-                    key={cat.id}
-                    onClick={() => { setSelectedCategory(cat.id); setError('') }}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '0.75rem 1rem',
-                      border: `2px solid ${selectedCategory === cat.id ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                      borderRadius: 'var(--radius-sm)',
-                      background: selectedCategory === cat.id ? 'var(--color-bg-alt)' : 'white',
-                      cursor: 'pointer',
-                      transition: 'all var(--transition-fast)',
-                    }}
+                    className="evcard-fav"
+                    style={{ boxShadow: 'none', background: 'var(--color-bg-alt)' }}
+                    onClick={() => toggle(event.id)}
+                    aria-label={isFav ? 'Quitar favorito' : 'Agregar favorito'}
                   >
-                    <span style={{ fontWeight: 500, fontSize: '0.9375rem' }}>{cat.name}</span>
-                    <div style={{ textAlign: 'right' }}>
-                      <span style={{ fontWeight: 700, color: 'var(--color-primary)', fontSize: '1rem' }}>${cat.price.toLocaleString()}</span>
-                      <br />
-                      <span style={{ fontSize: '0.75rem', color: cat.available > 0 ? 'var(--color-text-muted)' : 'var(--color-error)' }}>
-                        {cat.available > 0 ? `${cat.available} disponibles` : 'Agotado'}
-                      </span>
-                    </div>
+                    <Heart size={18} fill={isFav ? '#EF4444' : 'none'} style={{ color: isFav ? '#EF4444' : '#7C3AED' }} />
                   </button>
-                ))}
+                )}
+              </div>
+
+              {error && <div className="buy-error">{error}</div>}
+
+              <span className="buycard-label">Categoría</span>
+              <div className="cat-list" style={{ marginBottom: '1.3rem' }}>
+                {event.categories.map(cat => {
+                  const out = cat.available === 0
+                  const low = cat.available > 0 && cat.available <= 25
+                  return (
+                    <button
+                      key={cat.id}
+                      disabled={out}
+                      className={`cat-opt ${selectedCategory === cat.id ? 'sel' : ''}`}
+                      onClick={() => { if (!out) { setSelectedCategory(cat.id); setError(''); setQuantity(1) } }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div className="cat-radio" />
+                        <div>
+                          <div className="cnm">{cat.name}</div>
+                          <div className={`cav ${out ? 'out' : low ? 'low' : ''}`}>
+                            {out ? 'Agotado' : low ? `¡Solo ${cat.available}!` : `${cat.available} disponibles`}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="cpr">${cat.price.toLocaleString('es-CO')}</div>
+                    </button>
+                  )
+                })}
+              </div>
+
+              {category && (
+                <div className="qty-row">
+                  <span className="buycard-label" style={{ marginBottom: 0 }}>Cantidad</span>
+                  <div className="qty-ctrl">
+                    <button className="qty-btn" disabled={quantity <= 1} onClick={() => setQuantity(q => Math.max(1, q - 1))}>
+                      <Minus size={18} />
+                    </button>
+                    <span className="qty-num">{quantity}</span>
+                    <button className="qty-btn" disabled={quantity >= Math.min(category.available, 10)} onClick={() => setQuantity(q => Math.min(category.available, 10, q + 1))}>
+                      <Plus size={18} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {category && (
+                <div className="buy-summary">
+                  <div className="buy-row">
+                    <span>{category.name} × {quantity}</span>
+                    <span>${subtotal.toLocaleString('es-CO')}</span>
+                  </div>
+                  <div className="buy-row">
+                    <span>Cargo por servicio (8%)</span>
+                    <span>${fee.toLocaleString('es-CO')}</span>
+                  </div>
+                  <div className="buy-row total">
+                    <span>Total</span>
+                    <span>${total.toLocaleString('es-CO')}</span>
+                  </div>
+                </div>
+              )}
+
+              <button
+                className="btn btn-cta btn-lg btn-block"
+                onClick={handleBuy}
+                disabled={checkoutLoading || !category}
+              >
+                {checkoutLoading
+                  ? <span className="spinner" style={{ width: 20, height: 20, borderColor: 'rgba(255,255,255,0.3)', borderTopColor: 'white' }} />
+                  : category ? 'Comprar ahora' : 'Selecciona una categoría'
+                }
+              </button>
+
+              <div className="buy-trust">
+                <ShieldCheck size={15} /> Pago 100% seguro
               </div>
             </div>
-
-            {selectedCategory && (
-              <div style={{ marginBottom: '1rem' }}>
-                <label>Cantidad</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="btn btn-outline btn-sm"
-                    style={{ width: 40, height: 40, padding: 0 }}
-                  >
-                    -
-                  </button>
-                  <span style={{ fontWeight: 700, fontSize: '1.25rem', minWidth: 32, textAlign: 'center' }}>{quantity}</span>
-                  <button
-                    onClick={() => setQuantity(Math.min(category?.available || 10, quantity + 1))}
-                    className="btn btn-outline btn-sm"
-                    style={{ width: 40, height: 40, padding: 0 }}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {total > 0 && (
-              <div style={{
-                padding: '0.75rem 0',
-                borderTop: '1px solid var(--color-border)',
-                marginBottom: '1rem',
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
-                  <span>Subtotal</span>
-                  <span>${total.toLocaleString()}</span>
-                </div>
-              </div>
-            )}
-
-            <button
-              onClick={handleBuy}
-              disabled={!selectedCategory || checkoutLoading}
-              className="btn btn-cta btn-lg"
-              style={{ width: '100%' }}
-            >
-              {checkoutLoading ? (
-                <span className="spinner" style={{ width: 20, height: 20, borderColor: 'rgba(255,255,255,0.3)', borderTopColor: 'white' }} />
-              ) : (
-                <><ShoppingCart size={18} /> {user ? 'Comprar Ahora' : 'Iniciar Sesión para Comprar'}</>
-              )}
-            </button>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
