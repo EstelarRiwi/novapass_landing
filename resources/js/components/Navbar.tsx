@@ -104,6 +104,11 @@ export function Navbar() {
               </Link>
             )}
             {user && (
+              <Link to="/mis-favoritos" className="nav-link" onClick={() => setOpen(false)}>
+                <Heart size={18} /> Favoritos
+              </Link>
+            )}
+            {user && (
               <Link to="/mi-perfil" className="nav-link" onClick={() => setOpen(false)}>
                 <User size={18} /> Mi Perfil
               </Link>

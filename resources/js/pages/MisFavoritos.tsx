@@ -1,17 +1,13 @@
 import { useEffect } from 'react'
-import { useEvents } from '../hooks/useEvents'
 import { useFavorites } from '../hooks/useFavorites'
 import { EventCard } from '../components/EventCard'
 import { Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 export default function MisFavoritos() {
-  const { events, loading } = useEvents()
-  const { favorites, fetch: fetchFavs } = useFavorites()
+  const { favEvents, loading, fetch: fetchFavs } = useFavorites()
 
   useEffect(() => { fetchFavs() }, [])
-
-  const favEvents = events.filter(e => favorites.includes(e.id))
 
   return (
     <>
