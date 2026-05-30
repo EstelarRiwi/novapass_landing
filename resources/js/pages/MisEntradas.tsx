@@ -69,11 +69,19 @@ function printTicket58mm(ticket: Ticket, qrDataUrl: string) {
   .perf::before { left: -6.5px; }
   .perf::after { right: -6.5px; }
   .perf-line { position: absolute; top: 50%; left: 10px; right: 10px; border-top: 1.5px dashed #ddd; }
-  .qr-section { display: flex; flex-direction: column; align-items: center; padding: 5px 8px 7px; }
+  .qr-section { display: flex; flex-direction: column; align-items: center; padding: 5px 8px 4px; }
   .qr-img { width: 34mm; height: 34mm; }
   .qr-lbl { font-size: 6px; color: #999; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 3px; }
-  .code { text-align: center; font-size: 6.5px; letter-spacing: 0.28em; color: #555; font-weight: 700; border-top: 1px solid #eee; padding: 5px 0 6px; }
+  .perf2 { height: 13px; position: relative; overflow: visible; margin: 4px 0 2px; }
+  .perf2::before, .perf2::after { content: ''; position: absolute; top: 50%; transform: translateY(-50%); width: 13px; height: 13px; border-radius: 50%; background: #f0f0f0; z-index: 2; }
+  .perf2::before { left: -6.5px; }
+  .perf2::after { right: -6.5px; }
+  .perf2-line { position: absolute; top: 50%; left: 10px; right: 10px; border-top: 1.5px dashed #ddd; }
+  .barcode-section { display: flex; flex-direction: column; align-items: center; padding: 5px 8px 8px; }
+  .barcode-section svg { max-width: 100%; }
+  .code-num { text-align: center; font-size: 6.5px; letter-spacing: 0.28em; color: #555; font-weight: 700; margin-top: 3px; }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
 <div class="ticket">
@@ -100,9 +108,20 @@ function printTicket58mm(ticket: Ticket, qrDataUrl: string) {
     <img class="qr-img" src="${qrDataUrl}">
     <div class="qr-lbl">Presenta este código en la entrada</div>
   </div>
-  <div class="code">${code}</div>
+  <div class="perf2"><div class="perf2-line"></div></div>
+  <div class="barcode-section">
+    <svg id="barcode"></svg>
+    <div class="code-num">${code}</div>
+  </div>
 </div>
-<script>window.onload = () => { window.print(); setTimeout(() => window.close(), 800); }</script>
+<script>
+window.onload = () => {
+  JsBarcode('#barcode', '${ticket.id.replace(/-/g, '').slice(0, 20).toUpperCase()}', {
+    format: 'CODE128', width: 1.2, height: 28, displayValue: false, margin: 0, background: '#ffffff', lineColor: '#1a0f2e'
+  });
+  setTimeout(() => { window.print(); setTimeout(() => window.close(), 800); }, 300);
+};
+</script>
 </body>
 </html>`
 
