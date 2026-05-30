@@ -23,19 +23,19 @@ export interface Category {
 
 function mapEvent(raw: any): Event {
   return {
-    id: raw.id,
-    name: raw.title,
+    id: typeof raw.id === 'string' ? raw.id.trim() : raw.id,
+    name: raw.title ?? raw.name,
     description: raw.description,
-    date: raw.date,
-    location: raw.venue,
-    image_url: raw.image_url,
+    date: raw.date ?? raw.event_date,
+    location: raw.venue ?? raw.location,
+    image_url: raw.imageUrl ?? raw.image_url ?? null,
     status: raw.status,
     categories: (raw.categories || []).map((c: any) => ({
-      id: c.id,
+      id: typeof c.id === 'string' ? c.id.trim() : c.id,
       name: c.name,
       price: c.price,
-      capacity: c.total_capacity ?? c.capacity ?? c.available,
-      available: c.available,
+      capacity: c.total_capacity ?? c.totalCapacity ?? c.capacity ?? c.available ?? 0,
+      available: c.available ?? c.available_capacity ?? 0,
     })),
   }
 }
