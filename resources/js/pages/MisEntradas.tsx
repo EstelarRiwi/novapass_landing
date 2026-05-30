@@ -103,6 +103,7 @@ export default function MisEntradas() {
   const [tab, setTab] = useState<'active' | 'used'>('active')
   const [qrBlobs, setQrBlobs] = useState<Record<string, string>>({})
   const [printing, setPrinting] = useState<string | null>(null)
+  const [qrModal, setQrModal] = useState<string | null>(null)
 
   useEffect(() => { fetchTickets() }, [])
 
@@ -226,7 +227,12 @@ export default function MisEntradas() {
                     <div className="tstub-qr">
                       <div className="qr-box">
                         {qrSrc
-                          ? <img src={qrSrc} alt="QR de la entrada" style={{ width: 130, height: 130 }} />
+                          ? <img
+                              src={qrSrc}
+                              alt="QR de la entrada"
+                              style={{ width: 130, height: 130, cursor: 'zoom-in' }}
+                              onClick={() => setQrModal(qrSrc)}
+                            />
                           : <div style={{ width: 130, height: 130, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                               <QrCode size={60} style={{ color: 'var(--color-primary)', opacity: 0.4 }} />
                             </div>
@@ -242,6 +248,38 @@ export default function MisEntradas() {
           )}
         </div>
       </section>
+
+      {qrModal && (
+        <div
+          onClick={() => setQrModal(null)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 1000,
+            background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'zoom-out',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: '#fff', borderRadius: 16, padding: '1.5rem',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem',
+              boxShadow: '0 24px 64px rgba(0,0,0,0.5)',
+            }}
+          >
+            <img src={qrModal} alt="QR de la entrada" style={{ width: 260, height: 260, display: 'block' }} />
+            <p style={{ margin: 0, fontSize: '0.78rem', color: '#888', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Presenta este código en la entrada
+            </p>
+            <button
+              onClick={() => setQrModal(null)}
+              style={{ background: 'none', border: 'none', fontSize: '0.85rem', color: '#9333EA', fontWeight: 700, cursor: 'pointer', padding: '0.25rem 0.5rem' }}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
     </>
   )
 }
