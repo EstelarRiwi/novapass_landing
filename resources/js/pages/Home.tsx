@@ -4,7 +4,6 @@ import { useEvents } from '../hooks/useEvents'
 import { EventCard } from '../components/EventCard'
 import { useAuth } from '../context/AuthContext'
 import { ChevronRight, Music, Mic2, Drum, Guitar, Flame, ArrowRight, MapPin, Clock } from 'lucide-react'
-import type { Event } from '../hooks/useEvents'
 
 const GENRES = [
   { label: 'Todos', icon: <Music size={16} /> },
@@ -14,10 +13,10 @@ const GENRES = [
   { label: 'Festivales', icon: <Flame size={16} /> },
 ]
 
-function MarqueeTicker({ events }: { events: Event[] }) {
-  const names = events.length > 0
-    ? [...events.map(e => e.name), ...events.map(e => e.name)]
-    : ['NovaPass', 'Conciertos', 'Festivales', 'Entradas', 'Música en Vivo', 'NovaPass', 'Conciertos', 'Festivales', 'Entradas', 'Música en Vivo']
+const MARQUEE_ARTISTS = ['Karol G', 'Coldplay', 'Feid', 'Tame Impala', 'Bad Bunny', 'Olivia Rodrigo', 'Bomba Estéreo', 'Andrés Cepeda', 'Blessd', 'The Blaze']
+
+function MarqueeTicker() {
+  const names = [...MARQUEE_ARTISTS, ...MARQUEE_ARTISTS]
   return (
     <div className="marquee">
       <div className="marquee-track">
@@ -34,17 +33,26 @@ function MarqueeTicker({ events }: { events: Event[] }) {
   )
 }
 
+const FALLBACK_EVENT = {
+  id: 'karolg-2026',
+  name: 'Karol G · Mañana Será Bonito Tour',
+  location: 'El Campín · Bogotá',
+  date: '2026-09-20T21:00:00',
+  image_url: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=900&q=80',
+  categories: [{ price: 180000 }],
+}
+
 export default function Home() {
   const { events, loading } = useEvents()
   const { user } = useAuth()
   const [activeGenre, setActiveGenre] = useState('Todos')
-  const featured = events[0]
+  const featured = events[0] ?? (!loading ? FALLBACK_EVENT : null)
 
   return (
     <>
       {/* ── Hero ── */}
       <section className="hero">
-        <div className="hero-photo" />
+        <div className="hero-photo" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1400&q=80)' }} />
         <div className="hero-scrim" />
         <div className="hero-glow a" />
         <div className="hero-glow b" />
@@ -95,57 +103,48 @@ export default function Home() {
             </div>
 
             {/* Spotlight card */}
-            {featured && (
-              <Link to={`/evento/${featured.id}`} className="spotlight" style={{ textDecoration: 'none' }}>
-                <div
-                  className="spotlight-img"
-                  style={featured.image_url
-                    ? { backgroundImage: `url(${featured.image_url})` }
-                    : { background: 'linear-gradient(135deg, #6D28D9, #4C1D95)' }
-                  }
-                />
-                <div className="spotlight-grad" />
-                <div className="spotlight-top">
-                  <span className="badge" style={{ background: 'rgba(249,115,22,0.92)', color: '#fff' }}>
-                    <Flame size={12} fill="currentColor" strokeWidth={0} /> Evento destacado
-                  </span>
-                  <div className="datepill">
-                    <div className="d">{new Date(featured.date).getDate()}</div>
-                    <div className="m">
-                      {new Date(featured.date).toLocaleDateString('es-CO', { month: 'short' }).replace('.', '').toUpperCase()}
-                    </div>
-                  </div>
-                </div>
-                <div className="spotlight-body">
-                  <div className="city">{featured.location}</div>
-                  <h3>{featured.name}</h3>
-                  <div className="spotlight-meta">
-                    <span><MapPin size={15} /> {featured.location}</span>
-                    <span>
-                      <Clock size={15} />
-                      {new Date(featured.date).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}
+            {featured && (() => {
+              const isFallback = featured.id === FALLBACK_EVENT.id
+              const inner = (
+                <>
+                  <div className="spotlight-img" style={featured.image_url ? { backgroundImage: `url(${featured.image_url})` } : { background: 'linear-gradient(135deg, #6D28D9, #4C1D95)' }} />
+                  <div className="spotlight-grad" />
+                  <div className="spotlight-top">
+                    <span className="badge" style={{ background: 'rgba(249,115,22,0.92)', color: '#fff' }}>
+                      <Flame size={12} fill="currentColor" strokeWidth={0} /> Evento destacado
                     </span>
-                  </div>
-                  <div className="spotlight-cta">
-                    <div className="spotlight-price">
-                      <small>Boletas desde</small>
-                      <b>
-                        ${featured.categories.length > 0
-                          ? Math.min(...featured.categories.map(c => c.price)).toLocaleString('es-CO')
-                          : '0'}
-                      </b>
+                    <div className="datepill">
+                      <div className="d">{new Date(featured.date).getDate()}</div>
+                      <div className="m">{new Date(featured.date).toLocaleDateString('es-CO', { month: 'short' }).replace('.', '').toUpperCase()}</div>
                     </div>
-                    <span className="btn btn-cta">Comprar <ArrowRight size={17} /></span>
                   </div>
-                </div>
-              </Link>
-            )}
+                  <div className="spotlight-body">
+                    <div className="city">{featured.location}</div>
+                    <h3>{featured.name}</h3>
+                    <div className="spotlight-meta">
+                      <span><MapPin size={15} /> {featured.location}</span>
+                      <span><Clock size={15} /> {new Date(featured.date).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    <div className="spotlight-cta">
+                      <div className="spotlight-price">
+                        <small>Boletas desde</small>
+                        <b>${featured.categories.length > 0 ? Math.min(...featured.categories.map(c => c.price)).toLocaleString('es-CO') : '0'}</b>
+                      </div>
+                      <span className="btn btn-cta">Comprar <ArrowRight size={17} /></span>
+                    </div>
+                  </div>
+                </>
+              )
+              return isFallback
+                ? <div className="spotlight">{inner}</div>
+                : <Link to={`/evento/${featured.id}`} className="spotlight" style={{ textDecoration: 'none' }}>{inner}</Link>
+            })()}
           </div>
         </div>
       </section>
 
       {/* ── Marquee ── */}
-      <MarqueeTicker events={events} />
+      <MarqueeTicker />
 
       {/* ── Events grid ── */}
       <section className="section" id="eventos">

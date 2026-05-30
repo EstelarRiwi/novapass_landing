@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { CheckCircle, XCircle, Ticket } from 'lucide-react'
+import { api } from '../api/client'
 
 export default function PurchaseConfirmation() {
   const [searchParams] = useSearchParams()
@@ -17,8 +18,7 @@ export default function PurchaseConfirmation() {
     } else {
       setStatus('loading')
       if (paymentId) {
-        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/tickets/payment/verify?payment_id=${paymentId}`)
-          .then(r => r.json())
+        api.get<{ status: string }>(`/tickets/payment/verify?payment_id=${paymentId}`)
           .then(data => setStatus(data.status === 'approved' ? 'success' : 'error'))
           .catch(() => setStatus('error'))
       }
