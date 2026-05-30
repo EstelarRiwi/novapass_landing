@@ -1,29 +1,37 @@
 import { useState, useCallback } from 'react'
 import { api } from '../api/client'
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+const API_HOST = API_BASE.replace(/\/api$/, '')
+
 export interface Ticket {
   id: string
   event_id: string
   event_name: string
   event_date: string
+  event_venue: string
+  event_image_url: string | null
   category_name: string
   seat: string | null
   status: string
-  qr_url: string | null
+  qr_path: string | null
   price: number
 }
 
 function mapTicket(raw: any): Ticket {
   const ev = raw.event || {}
+  const qrRaw = raw.qrUrl ?? raw.qr_url ?? null
   return {
-    id: raw.id,
-    event_id: ev.id,
-    event_name: ev.title,
-    event_date: ev.date,
-    category_name: raw.category,
+    id: typeof raw.id === 'string' ? raw.id.trim() : raw.id,
+    event_id: typeof ev.id === 'string' ? ev.id.trim() : ev.id,
+    event_name: ev.title ?? ev.name ?? '',
+    event_date: ev.date ?? ev.event_date ?? '',
+    event_venue: ev.venue ?? '',
+    event_image_url: ev.imageUrl ?? ev.image_url ?? null,
+    category_name: raw.category ?? raw.category_name ?? '',
     seat: raw.seat ?? null,
     status: raw.status,
-    qr_url: raw.qrUrl ?? null,
+    qr_path: qrRaw ? (qrRaw.startsWith('http') ? qrRaw : `${API_HOST}${qrRaw}`) : null,
     price: raw.price ?? 0,
   }
 }
