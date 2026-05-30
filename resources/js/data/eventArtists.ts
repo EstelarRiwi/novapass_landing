@@ -60,6 +60,12 @@ const EVENT_ARTISTS: Record<string, Artist[]> = {
     { name: 'Nico Gómez', role: 'DJ Support' },
   ],
 
+  // Hamlet — Producción Contemporánea
+  'evnt-0000-0000-0000-000000000005': [
+    { name: 'Hamlet Cast', role: 'Elenco Principal' },
+    { name: 'Dir. Roberto Vélez', role: 'Director' },
+  ],
+
   // Romeo y Julieta — Teatro Clásico
   'evnt-0000-0000-0000-000000000001': [
     { name: 'Andrés Torres', role: 'Romeo' },
