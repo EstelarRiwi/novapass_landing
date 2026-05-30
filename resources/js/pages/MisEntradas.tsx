@@ -86,10 +86,9 @@ function printTicket58mm(ticket: Ticket, qrDataUrl: string) {
 <body>
 <div class="ticket">
   <div class="hero">
-    ${imgSrc ? `<img class="hero-img" src="${imgSrc}" crossorigin="anonymous">` : ''}
     <div class="hero-overlay"></div>
     <div class="hero-body">
-      <div class="brand">★ NovaPass · Entrada oficial</div>
+      <div class="brand">NovaPass · Entrada oficial</div>
       <div class="ev-name">${ticket.event_name}</div>
       <div class="ev-venue">${ticket.event_venue}</div>
     </div>
