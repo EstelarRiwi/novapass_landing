@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useTickets } from '../hooks/useTickets'
+import { useTickets, usePurchases } from '../hooks/useTickets'
 import type { Ticket } from '../hooks/useTickets'
 import { Download, Calendar, MapPin, QrCode, Send, Ticket as TicketIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -99,23 +99,29 @@ async function generateTicketPDF(ticket: Ticket, qrBlobUrl: string): Promise<voi
 }
 
 export default function MisEntradas() {
-  const { tickets, loading, fetch: fetchTickets } = useTickets()
+  const { tickets: activeTickets, loading: loadingActive, fetch: fetchActive } = useTickets()
+  const { purchases: historyTickets, loading: loadingHistory, fetch: fetchHistory } = usePurchases()
   const [tab, setTab] = useState<'active' | 'used'>('active')
   const [qrBlobs, setQrBlobs] = useState<Record<string, string>>({})
   const [printing, setPrinting] = useState<string | null>(null)
   const [qrModal, setQrModal] = useState<string | null>(null)
 
-  useEffect(() => { fetchTickets() }, [])
+  const loading = tab === 'active' ? loadingActive : loadingHistory
+
+  useEffect(() => { fetchActive() }, [])
+  useEffect(() => { if (tab === 'used') fetchHistory() }, [tab])
+
+  const allTickets = tab === 'active' ? activeTickets : historyTickets
 
   useEffect(() => {
-    tickets.forEach(t => {
+    allTickets.forEach(t => {
       if (t.qr_path && !qrBlobs[t.id]) {
         fetchAuthBlob(t.qr_path).then(url => {
           if (url) setQrBlobs(prev => ({ ...prev, [t.id]: url }))
         })
       }
     })
-  }, [tickets])
+  }, [allTickets])
 
   const handleDownload = useCallback(async (ticket: Ticket) => {
     const qrUrl = qrBlobs[ticket.id]
@@ -130,7 +136,7 @@ export default function MisEntradas() {
     }
   }, [qrBlobs])
 
-  const list = tickets.filter(t => tab === 'active' ? t.status === 'active' : t.status !== 'active')
+  const list = allTickets
 
   return (
     <>
