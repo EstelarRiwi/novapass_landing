@@ -18,7 +18,7 @@ interface RawPayload {
   timestamp: string
 }
 
-export function useNotifications(wsBaseUrl: string | null) {
+export function useNotifications(wsBaseUrl: string | null, userId: string | null) {
   const [notifs, setNotifs] = useState<Notification[]>([])
   const connectionRef = useRef<signalR.HubConnection | null>(null)
 
@@ -44,10 +44,12 @@ export function useNotifications(wsBaseUrl: string | null) {
   }, [])
 
   useEffect(() => {
-    if (!wsBaseUrl) return
+    if (!wsBaseUrl || !userId) return
 
     const conn = new signalR.HubConnectionBuilder()
-      .withUrl(`${wsBaseUrl}/hubs/notifications`)
+      .withUrl(`${wsBaseUrl}/hubs/notifications`, {
+        accessTokenFactory: () => localStorage.getItem('token') ?? ''
+      })
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Warning)
       .build()
@@ -57,7 +59,7 @@ export function useNotifications(wsBaseUrl: string | null) {
     conn.start().catch(err => console.warn('SignalR connect failed:', err))
 
     return () => { conn.stop() }
-  }, [wsBaseUrl, addNotif])
+  }, [wsBaseUrl, userId, addNotif])
 
   const unreadCount = notifs.filter(n => n.unread).length
 

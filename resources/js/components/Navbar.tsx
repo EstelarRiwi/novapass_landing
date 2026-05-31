@@ -17,7 +17,8 @@ export function Navbar() {
   const ddRef = useRef<HTMLDivElement>(null)
   const { theme, toggle } = useTheme()
   const { notifs, unreadCount, markAll, markOne } = useNotifications(
-    import.meta.env.VITE_WS_URL ?? null
+    import.meta.env.VITE_WS_URL ?? null,
+    user?.id ?? null
   )
 
   const transparent = location.pathname === '/' || location.pathname.startsWith('/evento/')
