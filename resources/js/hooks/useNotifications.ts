@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import * as signalR from '@microsoft/signalr'
 
 export interface Notification {
   id: string
@@ -10,17 +11,26 @@ export interface Notification {
   receivedAt: Date
 }
 
-export function useNotifications(wsUrl: string | null) {
-  const [notifs, setNotifs] = useState<Notification[]>([])
-  const connectionRef = useRef<any>(null)
+interface RawPayload {
+  title: string
+  desc: string
+  type: string
+  timestamp: string
+}
 
-  const addNotif = useCallback((payload: Omit<Notification, 'id' | 'unread' | 'receivedAt' | 'time'>) => {
+export function useNotifications(wsBaseUrl: string | null) {
+  const [notifs, setNotifs] = useState<Notification[]>([])
+  const connectionRef = useRef<signalR.HubConnection | null>(null)
+
+  const addNotif = useCallback((raw: RawPayload) => {
     const notif: Notification = {
-      ...payload,
       id: crypto.randomUUID(),
-      unread: true,
-      receivedAt: new Date(),
+      type: (raw.type as Notification['type']) ?? 'general',
+      title: raw.title,
+      desc: raw.desc,
       time: 'Ahora',
+      unread: true,
+      receivedAt: new Date(raw.timestamp),
     }
     setNotifs(prev => [notif, ...prev])
   }, [])
@@ -34,10 +44,23 @@ export function useNotifications(wsUrl: string | null) {
   }, [])
 
   useEffect(() => {
-    if (!wsUrl) return
-    // SignalR wired in next step
-    return () => { connectionRef.current = null }
-  }, [wsUrl, addNotif])
+    if (!wsBaseUrl) return
+
+    const conn = new signalR.HubConnectionBuilder()
+      .withUrl(`${wsBaseUrl}/hubs/notifications`, {
+        skipNegotiation: false,
+        transport: signalR.HttpTransportType.WebSockets,
+      })
+      .withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Warning)
+      .build()
+
+    connectionRef.current = conn
+    conn.on('ReceiveNotification', (payload: RawPayload) => addNotif(payload))
+    conn.start().catch(err => console.warn('SignalR connect failed:', err))
+
+    return () => { conn.stop() }
+  }, [wsBaseUrl, addNotif])
 
   const unreadCount = notifs.filter(n => n.unread).length
 
