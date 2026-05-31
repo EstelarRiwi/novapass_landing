@@ -35,8 +35,8 @@ export default function App() {
             <Route path="/mis-favoritos" element={<ProtectedRoute><MisFavoritos /></ProtectedRoute>} />
             <Route path="/mi-perfil" element={<ProtectedRoute><MiPerfil /></ProtectedRoute>} />
             <Route path="/pqrs" element={<ProtectedRoute><PQRS /></ProtectedRoute>} />
-            <Route path="*" element={<NotFound />} />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Chatbot />
       </AuthProvider>
