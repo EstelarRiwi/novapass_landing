@@ -10,6 +10,9 @@ COPY . .
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL:-http://localhost:5000/api}
 
+ARG VITE_WS_URL
+ENV VITE_WS_URL=${VITE_WS_URL:-http://localhost:5000}
+
 RUN npm run build
 
 FROM php:8.5-fpm-alpine

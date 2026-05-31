@@ -47,10 +47,7 @@ export function useNotifications(wsBaseUrl: string | null) {
     if (!wsBaseUrl) return
 
     const conn = new signalR.HubConnectionBuilder()
-      .withUrl(`${wsBaseUrl}/hubs/notifications`, {
-        skipNegotiation: false,
-        transport: signalR.HttpTransportType.WebSockets,
-      })
+      .withUrl(`${wsBaseUrl}/hubs/notifications`)
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Warning)
       .build()
