@@ -1,7 +1,10 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useState, useEffect, useRef } from 'react'
-import { Ticket, User, ShoppingBag, FileText, Heart, LogOut, Star, Menu, X } from 'lucide-react'
+import { Ticket, User, ShoppingBag, FileText, Heart, LogOut, Star, Menu, X, Sun, Moon } from 'lucide-react'
+import { useTheme } from '../hooks/useTheme'
+import { useNotifications } from '../hooks/useNotifications'
+import { NotifBell } from './NotifBell'
 
 export function Navbar() {
   const { user, logout } = useAuth()
@@ -10,7 +13,12 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [ddOpen, setDdOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
   const ddRef = useRef<HTMLDivElement>(null)
+  const { theme, toggle } = useTheme()
+  const { notifs, unreadCount, markAll, markOne } = useNotifications(
+    import.meta.env.VITE_WS_URL ?? null
+  )
 
   const transparent = location.pathname === '/' || location.pathname.startsWith('/evento/')
 
@@ -61,6 +69,21 @@ export function Navbar() {
                 <Heart size={16} /> Favoritos
               </Link>
             )}
+            <button className="theme-btn" onClick={toggle} aria-label="Cambiar tema" title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}>
+              {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
+            </button>
+
+            {user && (
+              <NotifBell
+                open={notifOpen}
+                setOpen={setNotifOpen}
+                notifs={notifs}
+                unreadCount={unreadCount}
+                markAll={markAll}
+                markOne={markOne}
+              />
+            )}
+
             {user ? (
               <div className="nav-account" ref={ddRef}>
                 <div className="nav-avatar" onClick={() => setDdOpen(!ddOpen)} title={user.fullName}>
