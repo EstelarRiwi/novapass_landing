@@ -885,3 +885,48 @@ label {
 .artist-photo-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; color: #fff; }
 .artist-name { font-weight: 700; font-size: 0.92rem; line-height: 1.3; }
 .artist-role { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-primary); background: rgba(147,51,234,0.1); padding: 0.2rem 0.55rem; border-radius: 999px; }
+
+/* ── Dark mode ─────────────────────────────────────────────── */
+html.dark {
+  --color-bg: #0F0B1E;
+  --color-bg-alt: #171130;
+  --color-surface: #1E1A38;
+  --color-surface-2: #271F4A;
+  --color-text: #EDE9FE;
+  --color-text-secondary: #C4B5FD;
+  --color-text-muted: #7C7A9C;
+  --color-border: rgba(139, 92, 246, 0.18);
+  --glass-bg: rgba(255,255,255,0.05);
+  --glass-border: rgba(139,92,246,0.2);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.50);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.45);
+  --shadow-lg: 0 18px 48px rgba(0,0,0,0.55);
+  --shadow-xl: 0 30px 70px rgba(0,0,0,0.65);
+}
+.theme-btn { background: transparent; border: none; cursor: pointer; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: inherit; transition: background .15s; }
+.theme-btn:hover { background: var(--color-bg-alt); }
+.nav.is-top .theme-btn:hover { background: rgba(255,255,255,0.16); }
+
+/* ── Notification bell ─────────────────────────────────────── */
+.notif-btn { position: relative; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: inherit; background: transparent; transition: background .15s; border: none; cursor: pointer; }
+.notif-btn:hover { background: var(--color-bg-alt); }
+.nav.is-top .notif-btn:hover { background: rgba(255,255,255,0.16); }
+.notif-badge { position: absolute; top: 4px; right: 4px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; background: var(--color-cta); color: #fff; font-size: 0.62rem; font-weight: 800; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.notif-panel { position: absolute; right: 0; top: calc(100% + 12px); width: 360px; max-width: calc(100vw - 32px); background: var(--color-surface); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); border: 1px solid var(--color-border); z-index: 300; overflow: hidden; animation: rise .25s var(--ease); }
+.notif-head { padding: 1rem 1.2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-border); }
+.notif-head h4 { font-size: 1.05rem; font-family: var(--font-display); }
+.notif-head button { font-size: 0.78rem; color: var(--color-primary); font-weight: 700; background: none; border: none; cursor: pointer; }
+.notif-list { max-height: 380px; overflow-y: auto; }
+.notif-row { display: flex; gap: 0.9rem; padding: 0.9rem 1.2rem; border-bottom: 1px solid var(--color-border); transition: background .12s; cursor: pointer; }
+.notif-row:hover { background: var(--color-bg); }
+.notif-row.unread { background: var(--color-bg-alt); }
+.notif-ic { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex: none; }
+.notif-ic.preventa { background: rgba(249,115,22,0.15); color: var(--color-cta); }
+.notif-ic.evento { background: var(--color-bg-alt); color: var(--color-primary); }
+.notif-ic.pqrs { background: #DCFCE7; color: #166534; }
+.notif-ic.general { background: var(--color-bg-alt); color: var(--color-primary); }
+.notif-row .nt { font-weight: 700; font-size: 0.88rem; color: var(--color-text); }
+.notif-row .nd { font-size: 0.82rem; color: var(--color-text-muted); margin-top: 0.1rem; }
+.notif-row .ntime { font-size: 0.72rem; color: var(--color-text-muted); margin-top: 0.3rem; }
+.notif-unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-cta); flex: none; margin-top: 0.4rem; }
+.notif-empty { padding: 3rem 1.5rem; text-align: center; color: var(--color-text-muted); font-size: 0.9rem; }
