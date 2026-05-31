@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useEvent } from '../hooks/useEvents'
 import { useAuth } from '../context/AuthContext'
 import { useCheckout } from '../hooks/useTickets'
 import { useFavorites } from '../hooks/useFavorites'
-import { getEventArtists, type Artist } from '../data/eventArtists'
+import { ARTIST_PHOTOS, type Artist } from '../data/eventArtists'
 import { Calendar, MapPin, ChevronLeft, Clock, Building2, Heart, Minus, Plus, ShieldCheck } from 'lucide-react'
 
 const AVATAR_COLORS = [
@@ -14,12 +14,13 @@ const AVATAR_COLORS = [
 
 function ArtistCard({ artist, index }: { artist: Artist; index: number }) {
   const [r, g] = AVATAR_COLORS[index % AVATAR_COLORS.length]
+  const photo = artist.photo ?? ARTIST_PHOTOS[artist.name]
   const initials = artist.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
   return (
     <div className="artist-card">
       <div className="artist-photo">
-        {artist.photo
-          ? <img src={artist.photo} alt={artist.name} />
+        {photo
+          ? <img src={photo} alt={artist.name} />
           : <div className="artist-photo-placeholder" style={{ background: `linear-gradient(135deg, ${r}, ${g})` }}>{initials}</div>
         }
       </div>
@@ -31,6 +32,18 @@ function ArtistCard({ artist, index }: { artist: Artist; index: number }) {
   )
 }
 
+function useArtists(eventId: string) {
+  const [artists, setArtists] = useState<Artist[]>([])
+  useEffect(() => {
+    if (!eventId) return
+    fetch(`/api-local/events/${encodeURIComponent(eventId)}/artists`)
+      .then(r => r.ok ? r.json() : [])
+      .then((data: Artist[]) => setArtists(Array.isArray(data) ? data : []))
+      .catch(() => {})
+  }, [eventId])
+  return artists
+}
+
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -38,6 +51,7 @@ export default function EventDetail() {
   const { event, loading } = useEvent(id ?? '')
   const { createPreference, loading: checkoutLoading } = useCheckout()
   const { favorites, toggle } = useFavorites()
+  const artists = useArtists(id ?? '')
 
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
   const [quantity, setQuantity] = useState(1)
@@ -65,7 +79,6 @@ export default function EventDetail() {
     )
   }
 
-  const artists = getEventArtists(event.id)
   const category = event.categories.find(c => c.id === selectedCategory)
   const fee = category ? Math.round(category.price * quantity * 0.08) : 0
   const subtotal = category ? category.price * quantity : 0
