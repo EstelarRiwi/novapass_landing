@@ -18,9 +18,36 @@ interface RawPayload {
   timestamp: string
 }
 
+function storageKey(userId: string) {
+  return `novapass_notifs_${userId}`
+}
+
+function loadStored(userId: string | null): Notification[] {
+  if (!userId) return []
+  try {
+    const raw = localStorage.getItem(storageKey(userId))
+    if (!raw) return []
+    return (JSON.parse(raw) as Notification[]).map(n => ({
+      ...n,
+      receivedAt: new Date(n.receivedAt),
+    }))
+  } catch {
+    return []
+  }
+}
+
 export function useNotifications(wsBaseUrl: string | null, userId: string | null) {
-  const [notifs, setNotifs] = useState<Notification[]>([])
+  const [notifs, setNotifs] = useState<Notification[]>(() => loadStored(userId))
   const connectionRef = useRef<signalR.HubConnection | null>(null)
+
+  useEffect(() => {
+    setNotifs(loadStored(userId))
+  }, [userId])
+
+  useEffect(() => {
+    if (!userId) return
+    localStorage.setItem(storageKey(userId), JSON.stringify(notifs))
+  }, [notifs, userId])
 
   const addNotif = useCallback((raw: RawPayload) => {
     const notif: Notification = {
@@ -43,6 +70,10 @@ export function useNotifications(wsBaseUrl: string | null, userId: string | null
     setNotifs(prev => prev.map(n => n.id === id ? { ...n, unread: false } : n))
   }, [])
 
+  const remove = useCallback((id: string) => {
+    setNotifs(prev => prev.filter(n => n.id !== id))
+  }, [])
+
   useEffect(() => {
     if (!wsBaseUrl || !userId) return
 
@@ -63,5 +94,5 @@ export function useNotifications(wsBaseUrl: string | null, userId: string | null
 
   const unreadCount = notifs.filter(n => n.unread).length
 
-  return { notifs, unreadCount, markAll, markOne }
+  return { notifs, unreadCount, markAll, markOne, remove }
 }

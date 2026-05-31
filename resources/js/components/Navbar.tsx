@@ -16,7 +16,7 @@ export function Navbar() {
   const [notifOpen, setNotifOpen] = useState(false)
   const ddRef = useRef<HTMLDivElement>(null)
   const { theme, toggle } = useTheme()
-  const { notifs, unreadCount, markAll, markOne } = useNotifications(
+  const { notifs, unreadCount, markAll, markOne, remove } = useNotifications(
     import.meta.env.VITE_WS_URL ?? null,
     user?.id ?? null
   )
@@ -82,6 +82,7 @@ export function Navbar() {
                 unreadCount={unreadCount}
                 markAll={markAll}
                 markOne={markOne}
+                remove={remove}
               />
             )}
 

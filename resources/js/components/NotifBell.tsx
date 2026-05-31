@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { Bell, Zap, Calendar, CheckCircle, Info } from 'lucide-react'
+import { Bell, Zap, Calendar, CheckCircle, Info, X } from 'lucide-react'
 import { Notification } from '../hooks/useNotifications'
 
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -16,9 +16,10 @@ interface Props {
   unreadCount: number
   markAll: () => void
   markOne: (id: string) => void
+  remove: (id: string) => void
 }
 
-export function NotifBell({ open, setOpen, notifs, unreadCount, markAll, markOne }: Props) {
+export function NotifBell({ open, setOpen, notifs, unreadCount, markAll, markOne, remove }: Props) {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export function NotifBell({ open, setOpen, notifs, unreadCount, markAll, markOne
                 <div
                   key={n.id}
                   className={`notif-row ${n.unread ? 'unread' : ''}`}
-                  onClick={() => markOne(n.id)}
+                  onMouseEnter={() => markOne(n.id)}
                 >
                   <div className={`notif-ic ${n.type}`}>{ICON_MAP[n.type]}</div>
                   <div style={{ flex: 1 }}>
@@ -65,6 +66,13 @@ export function NotifBell({ open, setOpen, notifs, unreadCount, markAll, markOne
                     <div className="ntime">{n.time}</div>
                   </div>
                   {n.unread && <div className="notif-unread-dot" />}
+                  <button
+                    className="notif-del"
+                    onClick={e => { e.stopPropagation(); remove(n.id) }}
+                    aria-label="Eliminar notificación"
+                  >
+                    <X size={13} />
+                  </button>
                 </div>
               ))
             )}

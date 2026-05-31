@@ -850,6 +850,9 @@ input::placeholder { color: #b8a9d6; }
 .notif-row .nd { font-size: 0.82rem; color: var(--color-text-muted); margin-top: 0.1rem; }
 .notif-row .ntime { font-size: 0.72rem; color: var(--color-text-muted); margin-top: 0.3rem; }
 .notif-empty { padding: 3rem 1.5rem; text-align: center; color: var(--color-text-muted); }
+.notif-del { background: none; border: none; padding: 0.2rem; color: var(--color-text-muted); border-radius: 4px; display: flex; align-items: center; cursor: pointer; opacity: 0; transition: opacity .15s, background .15s; flex: none; }
+.notif-row:hover .notif-del { opacity: 1; }
+.notif-del:hover { background: var(--color-border); color: var(--color-text); }
 
 @media (max-width: 880px) {
   .checkout-layout { grid-template-columns: 1fr; }
@@ -930,3 +933,6 @@ html.dark {
 .notif-row .ntime { font-size: 0.72rem; color: var(--color-text-muted); margin-top: 0.3rem; }
 .notif-unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-cta); flex: none; margin-top: 0.4rem; }
 .notif-empty { padding: 3rem 1.5rem; text-align: center; color: var(--color-text-muted); font-size: 0.9rem; }
+.notif-del { background: none; border: none; padding: 0.2rem; color: var(--color-text-muted); border-radius: 4px; display: flex; align-items: center; cursor: pointer; opacity: 0; transition: opacity .15s, background .15s; flex: none; }
+.notif-row:hover .notif-del { opacity: 1; }
+.notif-del:hover { background: var(--color-border); color: var(--color-text); }
