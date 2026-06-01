@@ -307,7 +307,7 @@ input::placeholder { color: #b8a9d6; }
 .nav-account { position: relative; }
 .nav-dropdown {
   position: absolute; right: 0; top: calc(100% + 12px);
-  width: 240px; background: #fff; border-radius: var(--radius-md);
+  width: 240px; max-width: calc(100vw - 2rem); background: #fff; border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg); border: 1px solid var(--color-border);
   padding: 0.5rem; overflow: hidden; z-index: 300;
   animation: rise .25s var(--ease);
@@ -436,7 +436,7 @@ input::placeholder { color: #b8a9d6; }
 .chip.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); box-shadow: var(--glow-purple); }
 
 /* ---------------- Event card ---------------- */
-.evgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(316px, 1fr)); gap: 1.7rem; }
+.evgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(316px, 100%), 1fr)); gap: 1.7rem; }
 .evcard {
   position: relative; border-radius: var(--radius-lg); overflow: hidden; cursor: pointer;
   background: #fff; box-shadow: var(--shadow-sm); border: 1px solid rgba(124,58,237,0.07);
@@ -936,3 +936,25 @@ html.dark {
 .notif-del { background: none; border: none; padding: 0.2rem; color: var(--color-text-muted); border-radius: 4px; display: flex; align-items: center; cursor: pointer; opacity: 0; transition: opacity .15s, background .15s; flex: none; }
 .notif-row:hover .notif-del { opacity: 1; }
 .notif-del:hover { background: var(--color-border); color: var(--color-text); }
+
+/* ── Mobile responsive additions ── */
+@media (max-width: 640px) {
+  .tstub {
+    grid-template-columns: 1fr;
+  }
+  .tstub-qr {
+    justify-self: center;
+  }
+  .pqrs-type-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .card-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
