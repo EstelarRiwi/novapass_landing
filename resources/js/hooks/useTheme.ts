@@ -5,7 +5,7 @@ type Theme = 'light' | 'dark'
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
     const stored = localStorage.getItem('theme') as Theme | null
-    return stored ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    return stored ?? 'light'
   })
 
   useEffect(() => {
