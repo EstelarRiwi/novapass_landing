@@ -17,7 +17,7 @@ function mapUser(raw: any) {
   }
 }
 
-  const update = useCallback(async (data: { name?: string; email?: string }) => {
+  const update = useCallback(async (data: { name?: string; email?: string; phone?: string }) => {
     setLoading(true)
     try {
       const raw = await api.put<any>('/auth/profile', data)

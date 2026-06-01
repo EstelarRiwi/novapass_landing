@@ -19,7 +19,7 @@ export default function MiPerfil() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSuccess(false)
-    await update({ name, email })
+    await update({ name, email, phone })
     setSuccess(true)
     setTimeout(() => setSuccess(false), 3000)
   }
